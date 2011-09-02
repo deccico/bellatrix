@@ -70,7 +70,7 @@ class Ec2lib:
         """        
         return self.ec2.createImage(instance_id, name, description, no_reboot)
 
-    def startInstance(self, image, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
+    def startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
         """
         starts an instance given an 'image' object
         
@@ -81,6 +81,7 @@ class Ec2lib:
                           m1.small | m1.large | m1.xlarge | c1.medium |
                           c1.xlarge | m2.xlarge | m2.2xlarge |
                           m2.4xlarge | cc1.4xlarge
+        :owner_name: string. Just the entity that initiated the instance. You will see the name in the 'tag name'. This library by default.
 
         """
         logging.info("starting image: " + image.id)
@@ -93,7 +94,7 @@ class Ec2lib:
         i = reservation.instances[0]
         i.update()
         logging.info("instance %s is now: %s" % (i.id, i.state))
-        self.tagInstance(i.id, "Name", os.path.basename(__file__) + " started me")
+        self.tagInstance(i.id, "Name",  owner_name + " started me")
         return i
 
     def stopInstance(self, i):

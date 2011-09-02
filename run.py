@@ -15,6 +15,7 @@ The idea is to:
 
 import logging
 
+APP="Bellatrix"
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(level=logging.INFO,
                     format=FORMAT,
@@ -33,12 +34,17 @@ KEY = open("key").read().strip()
 def getEc2Instance(ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
     ec2 = Ec2lib(KEY, SECRET)
     image = ec2.getImage(ami)  
-    inst = ec2.startInstance(image, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate")
+    inst = ec2.startInstance(image, key_name, security_group, instance_type, APP, instance_initiated_shutdown_behavior="terminate")
     return inst
+
+def executeCommands():
+    pass
 
 def run():
     #create a ec2 instance
     inst = getEc2Instance("ami-a7a660ce", "elasticbamboo", ["elasticbamboo"], 't1.micro')
+    #execute commands
+    
     
     #get the configuration
     #start an instance
