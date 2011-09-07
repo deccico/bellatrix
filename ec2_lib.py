@@ -11,6 +11,7 @@ import boto
 import datetime
 import logging
 import os
+import time
 
 NAME = __file__
 
@@ -22,6 +23,7 @@ class Ec2lib:
         self.ec2 = self.getEC2Connection()
         self.cw = self.getCloudWatchConnection()
         logging.info("%s - %s" % (NAME, self.VERSION))
+        self._running_state = "running"
 
     def getCloudWatchConnection(self):
         return boto.connect_cloudwatch(self._key, self._sec)
@@ -158,6 +160,27 @@ class Ec2lib:
         for e in elements:
             if e not in self.exceptions:
                 self.exceptions.append(e)
+    
+    def getDNSName(self, inst, TIME_OUT=300):
+        """get DNS name for an instance. This operation could take some time as the startup for new instances is not immediate"""
+        logging.info("getting the dns name for instance: " + inst.id + " time out is: " + str(TIME_OUT) + " seconds...")
+        while (not inst.dns_name and TIME_OUT > 0):
+            TIME_OUT -= 1
+            inst.update()
+            time.sleep(3)
+        if not inst.dns_name:
+            raise Exception("Sorry, but the instance never returned its address...")
+        logging.info("DNS name for %s is %s" % (inst.id, inst.dns_name))
+         
+    def waitUntilInstanceIsReady(self, inst, TIME_OUT=300):
+        logging.info("waiting until instance: " + inst.id + " is ready. Time out is: " + str(TIME_OUT) + " seconds...")
+        while (inst.state !=  self._running_state and TIME_OUT > 0):
+            TIME_OUT -= 1
+            inst.update()
+            time.sleep(3)
+        if inst.state !=  self._running_state:
+            raise Exception("Sorry, but the instance never got the: " + self._running_state + " state")
+        logging.info("Instance %s is %s" % (inst.id, inst.state))
         
 
 
