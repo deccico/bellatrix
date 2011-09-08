@@ -24,6 +24,7 @@ class Ec2lib:
         self.cw = self.getCloudWatchConnection()
         logging.info("%s - %s" % (NAME, self.VERSION))
         self._running_state = "running"
+        self.ERR_CONNECTION_REFUSED = 65280 
 
     def getCloudWatchConnection(self):
         return boto.connect_cloudwatch(self._key, self._sec)
@@ -70,7 +71,9 @@ class Ec2lib:
         :rtype: string
         :return: The new image id
         """        
-        return self.ec2.createImage(instance_id, name, description, no_reboot)
+        name = name.replace(":","-")[:128]
+        logging.info("burning instance: %s name: %s, description: %s" % (instance_id, name, description))
+        return self.ec2.create_image(instance_id, name, description, no_reboot)
 
     def startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
         """
@@ -164,24 +167,42 @@ class Ec2lib:
     def getDNSName(self, inst, TIME_OUT=300):
         """get DNS name for an instance. This operation could take some time as the startup for new instances is not immediate"""
         logging.info("getting the dns name for instance: " + inst.id + " time out is: " + str(TIME_OUT) + " seconds...")
+        step = 3
         while (not inst.dns_name and TIME_OUT > 0):
-            TIME_OUT -= 1
+            TIME_OUT -= step
             inst.update()
-            time.sleep(3)
+            time.sleep(step)
         if not inst.dns_name:
             raise Exception("Sorry, but the instance never returned its address...")
         logging.info("DNS name for %s is %s" % (inst.id, inst.dns_name))
+        return inst.dns_name
          
     def waitUntilInstanceIsReady(self, inst, TIME_OUT=300):
         logging.info("waiting until instance: " + inst.id + " is ready. Time out is: " + str(TIME_OUT) + " seconds...")
+        step = 3
         while (inst.state !=  self._running_state and TIME_OUT > 0):
-            TIME_OUT -= 1
+            TIME_OUT -= step
             inst.update()
-            time.sleep(3)
+            time.sleep(step)
         if inst.state !=  self._running_state:
             raise Exception("Sorry, but the instance never got the: " + self._running_state + " state")
         logging.info("Instance %s is %s" % (inst.id, inst.state))
         
+    def waitForConnectionReady(self, inst, user, key, dns, TIME_OUT=300):
+        logging.info("waiting until instance is ready to receive ssh connections. Instance: " + inst.id + " Time out is: " + str(TIME_OUT) + " seconds...")
+        tmp_file = "tmp"
+        cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, "echo CONNECTION READY", tmp_file)
+        step = 3
+        result = self.ERR_CONNECTION_REFUSED
+        while (result == self.ERR_CONNECTION_REFUSED and TIME_OUT > 0):
+            TIME_OUT -= step
+            time.sleep(step)
+            result = os.system(cmd)
+        if result ==  self._running_state:
+            raise Exception("Sorry, but the instance never got ready for SSH connections")
+        logging.info("Instance %s is ready for receiving ssh connections. %s" % (inst.id, open(tmp_file).read()))
+
+    
 
 
 
