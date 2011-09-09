@@ -5,7 +5,7 @@ ami = [
        #["ami-ba8b72d3", "Ubuntu08.04_MySQL5_0_Postgresql82_x64"],
        #["ami-c48b72ad", "Ubuntu08.04_MySQL5_0_Postgresql83_x64"],
        #["ami-a7a660ce", "Ubuntu10.04_Postgresql84_x64"],
-       ["ami-cd69a8a4", "Ubuntu10.04_Postgresql90_x64"]    
+       #[ami-cd69a8a4", "Ubuntu10.04_Postgresql90_x64"]    
        ]
 user = "ubuntu"
 home = "/home/ubuntu"
