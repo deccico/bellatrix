@@ -35,7 +35,7 @@ SECRET = open("secret").read().strip()
 KEY = open("key").read().strip()
 CONFIG_DIR = "./configs"  #todo get the path from the script
 OUT_TMP = "exec.tmp"
-PK = os.path.dirname(__file__) + os.path.sep + "ec2.pk"  #path to the private key to connect to agents
+PK = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "ec2.pk")  #path to the private key to connect to agents
 
 
 class Run():
@@ -44,6 +44,8 @@ class Run():
         self._app_name = app_name
         self.burn_at_the_end = burn_at_the_end
         self.CMD_OK = 0
+        if not os.path.isfile(PK): #todo add more validations (in a method)
+            raise Exception("%s does not contain the private key file" % PK)
 
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self._ec2.getImage(ami)  
@@ -84,6 +86,10 @@ class Run():
             logging.debug("processing: " + config)
             c = __import__(os.path.basename(CONFIG_DIR) + "." + config)
             mod = "c." + config + "."
+            skip_me = eval(mod + "skip_me")
+            if skip_me:
+                logging.info("skipping execution of config: %s due to its configuration skip_me=true" % config)
+                continue
             ami = eval(mod + "ami")
             commands =  eval(mod + "commands")
             user =  eval(mod + "user")

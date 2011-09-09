@@ -1,9 +1,7 @@
-#todo make some super-class to hold the common attributes
-
 ami = "ami-cc48b1a5"
 user = "ubuntu"
 home = "/home/ubuntu"
-skip_me = True
+skip_me = False
 
 commands = ["cd %s" % home,
             "killall python -w -v",
@@ -21,6 +19,3 @@ commands = ["cd %s" % home,
             "sed -i s/beac_agent/cbac_agent/ igniter.py",
             "chmod a+x igniter.py"
             ]
-
-
-
