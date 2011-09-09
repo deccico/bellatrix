@@ -111,17 +111,6 @@ class Run():
 def run():
     r = Run(KEY, SECRET, APP, True)
     r.run()
-    
-    #create a ec2 instance
-    #inst = getEc2Instance("ami-a7a660ce", "elasticbamboo", ["elasticbamboo"], 't1.micro')
-    #execute commands
-    
-    
-    #get the configuration
-    #start an instance
-    #pick the right script
-    #execute it
-    #burn the image
 
 if __name__ == '__main__':
     logging.info("starting %s" % APP)
