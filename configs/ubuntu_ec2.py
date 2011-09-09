@@ -1,9 +1,15 @@
-#todo make some super-class to hold the common attributes
-
-ami = "ami-cc48b1a5"
+ami = [
+       #["ami-5918db30", "Ubuntu10_04_FF36_MySQL51_x64"]
+       #["ami-8e06f8e7", "Ubuntu10_04_MySQL51_x64"],
+       #["ami-f3b6769a", "Ubuntu10_04_DB2_Express-C_9_7_1_x32"],
+       #["ami-ba8b72d3", "Ubuntu08.04_MySQL5_0_Postgresql82_x64"],
+       #["ami-c48b72ad", "Ubuntu08.04_MySQL5_0_Postgresql83_x64"],
+       #["ami-a7a660ce", "Ubuntu10.04_Postgresql84_x64"],
+       ["ami-cd69a8a4", "Ubuntu10.04_Postgresql90_x64"]    
+       ]
 user = "ubuntu"
 home = "/home/ubuntu"
-skip_me = True
+skip_me = False
 
 commands = ["cd %s" % home,
             "killall python -w -v",
@@ -21,6 +27,3 @@ commands = ["cd %s" % home,
             "sed -i s/beac_agent/cbac_agent/ igniter.py",
             "chmod a+x igniter.py"
             ]
-
-
-
