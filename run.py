@@ -120,7 +120,7 @@ class Run():
                                                     + self._app_name)
                     logging.info("ami: %s is being generated for configuration: %s" 
                                  % (new_ami, config_name))
-                    amis_burned.append([new_ami, confg_name])
+                    amis_burned.append([new_ami, config_name])
             logging.info("total of ami's burned: " % len(amis_burned))
             for a in amis_burned:
                 logging.info(str(a))
