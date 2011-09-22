@@ -20,10 +20,10 @@ import pkgutil
 import datetime
 
 APP="Bellatrix"
-FORMAT = '%(asctime)-15s %(message)s'
+FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(level=logging.INFO,
                     format=FORMAT,
-                    #filename='/tmp/ec2-killer.log',
+                    #filename='out',
                     filemode='a'
                     )
 
@@ -72,22 +72,28 @@ class Run():
         
     def executeCommands(self, user, dns, key, commands):
         results = []
-        errors = 0
+        errors = []
         for c in commands:
             cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, c, OUT_TMP)
             logging.info("executing: " + cmd)
             res = os.system(cmd)
             out = open(OUT_TMP).read()
-            results.append([cmd, out, res])
+            cmd_res = [cmd, out, res]
+            results.append(cmd_res)
             logging.info("result: " + str(res) + " output: " + out)
             #increment errors if necessary
-            errors = (errors+1) if res != self.CMD_OK else errors
-        if errors > 0:
-            logging.warning("At least one of the commands failed")
-        logging.info("Commands executions: %s Errors: %s" % (len(commands), errors))
+            if res != 0:
+                errors.append(cmd_res)
+        if len(errors) > 0:
+            logging.warning("The following commands failed its execution:")
+            for e in errors:
+                logging.warning("cmd: %s exit code: %s" % (e[0], e[2])) 
+                logging.warning("last 500 chars output: %s" % e[1][-500:]) 
+        logging.info("Commands executions: %s Errors: %s" % (len(commands), len(errors)))
             
     def run(self):
         configs = self.getConfigs()
+        amis_burned = []
         for config in configs:
             logging.info("processing: " + config)
             c = __import__(os.path.basename(CONFIG_DIR) + "." + config)
@@ -114,6 +120,10 @@ class Run():
                                                     + self._app_name)
                     logging.info("ami: %s is being generated for configuration: %s" 
                                  % (new_ami, config_name))
+                    amis_burned.append([new_ami, confg_name])
+            logging.info("total of ami's burned: " % len(amis_burned))
+            for a in amis_burned:
+                logging.info(str(a))
 
 def run():
     r = Run(KEY, SECRET, APP, PK)

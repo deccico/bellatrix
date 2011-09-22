@@ -3,7 +3,7 @@
 Please, keep every block independent from the others. 
 """
 
-#special cases are not special enough...
+#special cases are not special enough... PEP20
 skip_me = True
 amis = []
 user = ""
@@ -30,8 +30,7 @@ create_rc_local = ["echo \#\!/bin/sh -e > rc.local",
                    "cat /etc/rc.local",
                    ]
 
-deploy_igniter = ["wget https://s3.amazonaws.com/bamboo-igniter/igniter.py",
-                  "sed -i s/beac_agent/cbac_agent/ igniter.py",
+deploy_igniter = ["wget https://s3.amazonaws.com/bamboo-ec2-igniter/igniter.py",
                   "chmod a+x igniter.py"
                   ]
 
@@ -63,19 +62,24 @@ jdk = "jdk-7-linux-x64.tar.gz"
 install_jdk_17_00  = [
                      "wget https://s3.amazonaws.com/bamboo-ec2/%s" % jdk,
                      "tar -xvzf %s" % jdk,
-                     "echo |./%s >out_jdk 2>&1" % jdk,
                      "cat out_jdk",
                      "sudo mkdir -p /opt/java/sdk/",
                      "sudo mv jdk1.7.0 /opt/java/sdk/",
                      ]
 
-install_bamboo_assembly = [
+install_bamboo_assembly =[
                            "wget https://s3.amazonaws.com/bamboo-ec2-jbac/jbac_agent.zip",
-                           "unzip -o -d $HOME/bamboo-elastic-agent jbac_agent.zip"
+                           "unzip -o jbac_agent.zip",
+                           "cp bamboo-elastic-agent/bin/bamboo-ec2-metadata $HOME/bamboo-ec2-metadata.exe"
                            ]
 
+out = "$HOME/.s3cfg"
 install_s3_cmd = [
                   "wget https://s3.amazonaws.com/bamboo-ec2/s3cmd.zip",
-                  "unzip -o -d $HOME/s3cmd s3cmd.zip"
-                  ] 
+                  "unzip -o -d $HOME/s3cmd s3cmd.zip",
+                  "cd $HOME/s3cmd/s3cmd;sudo python setup.py install",
+                  "echo [default] > %s" % out,
+                  "echo access_key = AKIAJ55SDWUCH2HHBUCA >> %s" % out,
+                  "echo secret_key = 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 >> %s" % out,
+                  ]
 
