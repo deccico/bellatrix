@@ -35,16 +35,19 @@ SECRET = open("secret").read().strip()
 KEY = open("key").read().strip()
 CONFIG_DIR = "./configs"  #todo get the path from the script
 OUT_TMP = "exec.tmp"
-PK = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "ec2.pk")  #path to the private key to connect to agents
-
+CUR_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+PK = CUR_DIR + os.path.sep + "ec2.pk"  #path to the private key to connect to agents
+REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
-    def __init__(self, key, sec, app_name, pk): #todo move all the globals here
+    def __init__(self, key, sec, app_name, pk, reports): #todo move all the globals here
         self.checkPkFile(pk)
         self._ec2 = Ec2lib(KEY, SECRET) 
         self._app_name = app_name
         self.CMD_OK = 0
         self.define_constants()
+        if not os.path.isdir(reports):
+            os.makedirs(reports)
 
     def checkPkFile(self, pk):
         if not os.path.isfile(pk): #todo add more validations (in a method)
@@ -93,6 +96,13 @@ class Run():
             logging.warning("config: %s cmd: %s exit code: %s" % (e[3], e[0], e[2])) 
             logging.warning("last 500 chars output: %s" % e[1][-500:]) 
             
+    def saveReport(self, results, config):                
+        logging.info("Saving report")
+        report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat()
+        with open(report_name, "w") as f:
+            for r in results:
+                f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
+
     def run(self):
         configs = self.getConfigs()
         amis_burned = []
@@ -117,6 +127,7 @@ class Run():
                 self._ec2.waitUntilInstanceIsReady(inst)
                 self._ec2.waitForConnectionReady(inst, user, PK, dns_name)
                 r, e = self.executeCommands(user, inst.dns_name, PK, commands, config_name)
+                self.saveReport(r, config_name)
                 errors += e
                 if burn_at_the_end:
                     new_ami = self._ec2.createImage(inst.id, config_name + "-" 
@@ -131,7 +142,7 @@ class Run():
                 logging.info(str(a))
 
 def run():
-    r = Run(KEY, SECRET, APP, PK)
+    r = Run(KEY, SECRET, APP, PK, REPORTS_DIR)
     r.run()
 
 if __name__ == '__main__':

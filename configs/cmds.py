@@ -8,8 +8,6 @@ skip_me = True
 amis = []
 user = ""
 
-go_home = ["cd $HOME"]
-
 upgrade_ubuntu = ["sudo apt-get update -y",
                   "sudo apt-get upgrade -y",
                   ]
@@ -20,12 +18,13 @@ kill_java_python = ["killall python -w -v",
 
 clean_home = ["rm -rf $HOME/*"]
 
-create_rc_local = ["echo \#\!/bin/sh -e > rc.local",
-                   "echo ulimit -n 8192 >> rc.local",
-                   "echo cd $HOME >> rc.local",
-                   "echo su -c $HOME/igniter.py - ubuntu >> rc.local",
+rc_local = "$HOME/rc.local"
+create_rc_local = ["echo \#\!/bin/sh -e > %s" % rc_local,
+                   "echo ulimit -n 8192 >> %s" % rc_local,
+                   "echo cd $HOME >> %s" % rc_local,
+                   "echo su -c $HOME/igniter.py - ubuntu >> %s" % rc_local,
                    "sudo rm /etc/rc.local",
-                   "chmod a+x rc.local",
+                   "chmod a+x %s" % rc_local,
                    "sudo cp rc.local /etc/rc.local",
                    "cat /etc/rc.local",
                    ]

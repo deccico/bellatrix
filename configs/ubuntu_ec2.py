@@ -4,12 +4,12 @@ This is part of the normal Bellatrix process. The new configuration will be burn
 #list of ami's to process with the below cmds
 amis = [
        ["ami-ba8b72d3", "Ubuntu08.04_MySQL5_0_Postgresql82_x64"],
-       ["ami-c48b72ad", "Ubuntu08.04_MySQL5_0_Postgresql83_x64"],
-       ["ami-8e06f8e7", "Ubuntu10_04_MySQL51_x64"],
-       ["ami-cc48b1a5",  "Ubuntu10.04-FF36-MySQL51-x64"],
-       ["ami-a7a660ce", "Ubuntu10.04-Postgresql84-x64"],
-       ["ami-f3b6769a", "Ubuntu10_04_DB2_Express-C_9_7_1_x32"],
-       ["ami-cd69a8a4", "Ubuntu10.04_Postgresql90_x64"]    
+       #["ami-c48b72ad", "Ubuntu08.04_MySQL5_0_Postgresql83_x64"],
+       #["ami-8e06f8e7", "Ubuntu10_04_MySQL51_x64"],
+       #["ami-cc48b1a5",  "Ubuntu10.04-FF36-MySQL51-x64"],
+       #["ami-a7a660ce", "Ubuntu10.04-Postgresql84-x64"],
+       #["ami-f3b6769a", "Ubuntu10_04_DB2_Express-C_9_7_1_x32"],
+       #["ami-cd69a8a4", "Ubuntu10.04_Postgresql90_x64"]    
        ]
 
 #common variables
@@ -20,8 +20,7 @@ user = "ubuntu"             #user of the ami's
 #list of cmds to execute
 import cmds
 
-commands = cmds.go_home \
-            + cmds.kill_java_python \
+commands = cmds.kill_java_python \
             + cmds.upgrade_ubuntu \
             + cmds.clean_home \
             + cmds.create_rc_local \
