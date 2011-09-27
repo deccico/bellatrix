@@ -8,6 +8,13 @@ skip_me = True
 amis = []
 user = ""
 
+def removeSudo(cmds):
+    list = cmds
+    for i in range(len(list)):
+        list[i] = list[i].replace("sudo ", "")
+    return list
+    
+
 upgrade_ubuntu = ["sudo apt-get update -y",
                   "sudo apt-get upgrade -y",
                   ]
@@ -18,16 +25,18 @@ kill_java_python = ["killall python -w -v",
 
 clean_home = ["rm -rf $HOME/*"]
 
-rc_local = "$HOME/rc.local"
-create_rc_local = ["echo \#\!/bin/sh -e > %s" % rc_local,
-                   "echo ulimit -n 8192 >> %s" % rc_local,
-                   "echo cd $HOME >> %s" % rc_local,
-                   "echo su -c $HOME/igniter.py - ubuntu >> %s" % rc_local,
-                   "sudo rm /etc/rc.local",
-                   "chmod a+x %s" % rc_local,
-                   "sudo cp rc.local /etc/rc.local",
-                   "cat /etc/rc.local",
-                   ]
+def getCreateRcLocal(user):
+    rc_local = "$HOME/rc.local"
+    create_rc_local = ["echo \#\!/bin/sh -e > %s" % rc_local,
+                       "echo ulimit -n 8192 >> %s" % rc_local,
+                       "echo cd $HOME >> %s" % rc_local,
+                       "echo su -c $HOME/igniter.py - %s >> %s" % (rc_local, user),
+                       "sudo rm /etc/rc.local",
+                       "chmod a+x %s" % rc_local,
+                       "sudo cp rc.local /etc/rc.local",
+                       "cat /etc/rc.local",
+                       ]
+    return create_rc_local
 
 deploy_igniter = ["wget https://s3.amazonaws.com/bamboo-ec2-igniter/igniter.py",
                   "chmod a+x igniter.py"
@@ -61,7 +70,6 @@ jdk = "jdk-7-linux-x64.tar.gz"
 install_jdk_17_00  = [
                      "wget https://s3.amazonaws.com/bamboo-ec2/%s" % jdk,
                      "tar -xvzf %s" % jdk,
-                     "cat out_jdk",
                      "sudo mkdir -p /opt/java/sdk/",
                      "sudo mv jdk1.7.0 /opt/java/sdk/",
                      ]
