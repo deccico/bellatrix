@@ -3,7 +3,7 @@ This is part of the normal Bellatrix process. The new configuration will be burn
 
 #list of ami's to process with the below cmds
 amis = [
-       ["ami-f3b6769a", "Ubuntu10_04_DB2_Express-C_9_7_1_x32"],
+       ["ami-99ac6df0", "Ubuntu10_04_DB2_Express-C_9_7_1_x32"],
        ]
 
 #common variables

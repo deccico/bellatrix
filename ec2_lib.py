@@ -44,7 +44,10 @@ class Ec2lib:
         return self.ec2.get_all_instances()
 
     def getImage(self, ami):
-        return self.ec2.get_image(ami)
+        image = self.ec2.get_image(ami)
+        if image == None:
+            raise Exception("Sorry, but I couldn't get an image object from %s, please check whether it exists or if this account has proper permissions..." % ami)
+        return image
 
     def createImage(self, instance_id, name, description=None, no_reboot=False):
         """
