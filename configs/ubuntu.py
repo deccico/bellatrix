@@ -13,7 +13,7 @@ amis = [
 
 #common variables
 burn_ami_at_the_end=True    #decide whether or not burning the images at the end
-skip_me = True             #decide whether to skip or not this configuration
+skip_me = False             #decide whether to skip or not this configuration
 user = "ubuntu"             #user of the ami's 
 
 #list of cmds to execute

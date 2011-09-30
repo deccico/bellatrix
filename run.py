@@ -14,11 +14,12 @@ The idea is to:
     -burn the instance and save the new ami
 '''
 
+import datetime
 import logging
 import os
-import re
 import pkgutil
-import datetime
+import re
+import sys
 
 APP="Bellatrix"
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
@@ -140,13 +141,13 @@ class Run():
             configs = self.getConfigs()
         else:
             configs = [config]
-        for c in configs:
-            logging.info("processing: " + c)
-            c = __import__(os.path.basename(CONFIG_DIR) + "." + c)
-            mod = "c." + c + "."
+        for cfg in configs:
+            logging.info("processing: " + cfg)
+            c = __import__(os.path.basename(CONFIG_DIR) + "." + cfg)
+            mod = "c." + cfg + "."
             skip_me = eval(mod + self.SKIP_ME)
             if skip_me:
-                logging.info("skipping execution of config: %s due to its configuration skip_me=true" % c)
+                logging.info("skipping execution of config: %s due to its configuration skip_me=true" % cfg)
                 continue
             amis = eval(mod + self.AMIS)
             commands =  eval(mod + self.CMDS)
