@@ -30,7 +30,7 @@ def getCreateRcLocal(user):
     create_rc_local = ["echo \#\!/bin/sh -e > %s" % rc_local,
                        "echo ulimit -n 8192 >> %s" % rc_local,
                        "echo cd $HOME >> %s" % rc_local,
-                       "echo su -c $HOME/igniter.py - %s >> %s" % (rc_local, user),
+                       "echo su -c $HOME/igniter.py - %s >> %s" % (user, rc_local),
                        "sudo rm /etc/rc.local",
                        "chmod a+x %s" % rc_local,
                        "sudo cp rc.local /etc/rc.local",
