@@ -15,7 +15,6 @@ user = "ubuntu"              #user of the ami's
 import cmds
 
 commands = cmds.kill_java_python \
-            + cmds.upgrade_ubuntu \
             + cmds.clean_home \
             + cmds.getCreateRcLocal(user) \
             + cmds.deploy_igniter \
