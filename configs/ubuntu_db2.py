@@ -9,7 +9,7 @@ amis = [
 #common variables
 burn_ami_at_the_end=True    #decide whether or not burning the images at the end
 skip_me = False             #decide whether to skip or not this configuration
-user = "root"               #user of the ami's 
+user = "ubuntu"              #user of the ami's 
 
 #list of cmds to execute
 import cmds
