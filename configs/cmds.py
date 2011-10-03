@@ -23,7 +23,7 @@ kill_java_python = ["killall python -w -v",
                     "killall java -w -v",
                     ]
 
-clean_home = ["rm -rf $HOME/*"]
+clean_home = ["rm -rf $HOME/*;ls $HOME"]
 
 def getCreateRcLocal(user):
     rc_local = "$HOME/rc.local"
@@ -39,45 +39,48 @@ def getCreateRcLocal(user):
     return create_rc_local
 
 deploy_igniter = ["wget https://s3.amazonaws.com/bamboo-ec2-igniter/igniter.py",
-                  "chmod a+x igniter.py"
+                  "chmod a+x igniter.py;ls -la igniter.py"
                   ]
 
-upgrade_ubuntu_distro = ["sudo apt-get update -y",
-                         "sudo apt-get upgrade -y"
-                         ]
-
 jdk = "jdk-6u26-linux-x64.bin"
+java_dir = "jdk1.6.0_26"
 install_jdk_16_26 = [
                      "wget https://s3.amazonaws.com/bamboo-ec2/%s" % jdk,
                      "chmod a+x %s" % jdk,
                      "echo |./%s >out_jdk 2>&1" % jdk,
                      "cat out_jdk",
                      "sudo mkdir -p /opt/java/sdk/",
-                     "sudo mv jdk1.6.0_26 /opt/java/sdk/",
+                     "sudo mv %s /opt/java/sdk/" % java_dir,
+                     "/opt/java/sdk/%s/bin/java -version > out;cat out" % java_dir
                      ]
 
 jdk = "jdk-6u27-linux-x64.bin"
+java_dir = "jdk1.6.0_27"
 install_jdk_16_27 = [
                      "wget https://s3.amazonaws.com/bamboo-ec2/%s" % jdk,
                      "chmod a+x %s" % jdk,
                      "echo |./%s >out_jdk 2>&1" % jdk,
                      "cat out_jdk",
                      "sudo mkdir -p /opt/java/sdk/",
-                     "sudo mv jdk1.6.0_27 /opt/java/sdk/",
+                     "sudo mv %s /opt/java/sdk/" % java_dir,
+                     "/opt/java/sdk/%s/bin/java -version" % java_dir
                      ]
 
 jdk = "jdk-7-linux-x64.tar.gz"
+java_dir = "jdk1.7.0"
 install_jdk_17_00  = [
                      "wget https://s3.amazonaws.com/bamboo-ec2/%s" % jdk,
                      "tar -xvzf %s" % jdk,
                      "sudo mkdir -p /opt/java/sdk/",
-                     "sudo mv jdk1.7.0 /opt/java/sdk/",
+                     "sudo mv %s /opt/java/sdk/" % java_dir,
+                     "/opt/java/sdk/%s/bin/java -version" % java_dir
                      ]
 
 install_bamboo_assembly =[
                            "wget https://s3.amazonaws.com/bamboo-ec2-jbac/jbac_agent.zip",
                            "unzip -o jbac_agent.zip",
-                           "cp bamboo-elastic-agent/bin/bamboo-ec2-metadata $HOME/bamboo-ec2-metadata.exe"
+                           "cp bamboo-elastic-agent/bin/bamboo-ec2-metadata $HOME/bamboo-ec2-metadata.exe",
+                           "ls $HOME/bamboo-ec2-metadata.exe"
                            ]
 
 out = "$HOME/.s3cfg"
@@ -88,5 +91,6 @@ install_s3_cmd = [
                   "echo [default] > %s" % out,
                   "echo access_key = AKIAJ55SDWUCH2HHBUCA >> %s" % out,
                   "echo secret_key = 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 >> %s" % out,
+                  "cat %s" % out
                   ]
 
