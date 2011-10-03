@@ -176,7 +176,7 @@ class Run():
         logging.info("accounts from %s: %s" % (perm_file,l))
         return l
     
-    def setPermissions(self, amis, permissions):
+    def setPermissionsToAmis(self, amis, permissions):
         self._ec2.setPermissionsToAmis(amis, permissions)
 
     
