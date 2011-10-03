@@ -197,12 +197,25 @@ class Ec2lib:
         while (result == self.ERR_CONNECTION_REFUSED and TIME_OUT > 0):
             TIME_OUT -= step
             time.sleep(step)
+            logging.info("executing:%s " % cmd )
             result = os.system(cmd)
         if result ==  self._running_state:
             raise Exception("Sorry, but the instance never got ready for SSH connections")
         logging.info("Instance %s is ready for receiving ssh connections. %s" % (inst.id, open(tmp_file).read()))
 
-    
+    def setPermissionsToAmis(self, amis, account_permissions):
+        """set account permissions to a set of ami's"""
+        for a in amis:
+            try:
+                image = self.getImage(a)
+                logging.info("setting execute permissions to %s for accounts:%s" % (a,account_permissions))
+                res=image.set_launch_permissions(account_permissions)
+                logging.info("operation result:%s " % res )
+            except:
+                logging.exception("Error setting permissions to ami:%s Please check whether " \
+                                  "it exists or your account has proper permissions to access it." % a)     
+                
+                  
 
 
 
