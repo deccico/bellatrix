@@ -38,7 +38,9 @@ KEY = open("key").read().strip()
 CONFIG_DIR = "./configs"  #todo get the path from the script
 OUT_TMP = "exec.tmp"
 CUR_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-PK = CUR_DIR + os.path.sep + "ec2.pk"  #path to the private key to connect to agents
+PK = "ec2.pk" #path to the private key to connect to agents
+if sys.platform != "cygwin": #for some reason ssh cygwin doesn't support the full path for the pk
+    PK = CUR_DIR + os.path.sep + PK  
 REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
@@ -64,6 +66,7 @@ class Run():
         self.BURN_OR_NOT = "burn_ami_at_the_end"
         self.SKIP_ME = "skip_me"
         self.ALL_CONFIGS = "all"
+        self.ACCOUNT_LEN = 12
     
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self._ec2.getImage(ami)  
@@ -107,7 +110,7 @@ class Run():
             for r in results:
                 f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
 
-    def _processConfig(self, amis, burn_at_the_end, commands, user):
+    def _processConfig(self, amis, commands, user, burn_at_the_end):
         """execute a configuration, internal method of run"""
         amis_burned = []
         errors = [] 
@@ -160,6 +163,22 @@ class Run():
         logging.info("total of ami's burned:%s" % len(amis_burned))
         for a in amis_burned:
             logging.info(str(a))
+        self.setPermissionsToAmis(amis_burned, self.getAccountPermissions())       
+
+    def getAccountPermissions(self, perm_file="account_permissions"):
+        """"Return list of accounts where new ami's will get execute permissions"""
+        l = []
+        with open(perm_file) as f:
+             for line in f:
+                 line=line.strip()
+                 if len(line)==self.ACCOUNT_LEN:
+                     l.append(line)
+        logging.info("accounts from %s: %s" % (perm_file,l))
+        return l
+    
+    def setPermissions(self, amis, permissions):
+        self._ec2.setPermissionsToAmis(amis, permissions)
+
     
 def run(args):
     r = Run(KEY, SECRET, APP, PK, REPORTS_DIR)
