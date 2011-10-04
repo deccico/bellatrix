@@ -8,12 +8,11 @@ skip_me = True
 amis = []
 user = ""
 
-def removeSudo(cmds):
+def changeCommands(cmds, old_value, new_value):
     list = cmds
     for i in range(len(list)):
-        list[i] = list[i].replace("sudo ", "")
+        list[i] = list[i].replace(old_value, new_value)
     return list
-    
 
 upgrade_ubuntu = ["sudo apt-get update -y",
                   "sudo apt-get upgrade -y",
@@ -25,15 +24,15 @@ kill_java_python = ["killall python -w -v",
 
 clean_home = ["rm -rf $HOME/*;ls $HOME"]
 
-def getCreateRcLocal(user):
-    rc_local = "$HOME/rc.local"
+def getCreateRcLocal(user, home="$HOME"):
+    rc_local = "rc.local"
     create_rc_local = ["echo \#\!/bin/sh -e > %s" % rc_local,
                        "echo ulimit -n 8192 >> %s" % rc_local,
-                       "echo cd $HOME >> %s" % rc_local,
-                       "echo su -c $HOME/igniter.py - %s >> %s" % (user, rc_local),
+                       "echo cd %s >> %s" % (home, rc_local),
+                       "echo su -c %s/igniter.py - %s >> %s" % (home, user, rc_local),
                        "sudo rm /etc/rc.local",
                        "chmod a+x %s" % rc_local,
-                       "sudo cp rc.local /etc/rc.local",
+                       "sudo cp %s /etc/rc.local" % rc_local,
                        "cat /etc/rc.local",
                        ]
     return create_rc_local
@@ -93,4 +92,91 @@ install_s3_cmd = [
                   "echo secret_key = QSVeCd726GKLE4P3ScI17n6WAajoNInbV6hTq8oS >> %s" % out,
                   "cat %s" % out
                   ]
+out = "/home/oracle/.bash_profile"
+oracle_bash_profile = [
+                  "rm %s" % out,     
+                  "echo # Get the aliases and functions > %s" % out,
+                  "echo 'if [ -f ~/.bashrc ]; \then' >> %s" % out,
+                  "echo   . \~/.bashrc >> %s" % out,
+                  "echo                >> %s" % out,
+                  "echo \# User specific environment and startup programs >> %s" % out,
+                  "echo JAVA_HOME=/usr/java/jdk1.6.0_24 >> %s" % out,
+                  "echo M2_HOME=/opt/apache-maven-2.1.0 >> %s" % out,
+                  "echo export M2_HOME >> %s" % out,
+                  "echo PATH=$PATH:$HOME/bin:/$M2_HOME/bin >> %s" % out,
+                  "echo PATH=$PATH:$HOME/bin >> %s" % out,
+                  "echo                >> %s" % out,
+                  "echo export PATH    >> %s" % out,
+                  "echo                >> %s" % out,
+                  "echo  \## Oracle Setup \## >> %s" % out,
+                  "echo umask 022  >> %s" % out,
+                  "echo ORACLE_BASE=/u01/app >> %s" % out,
+                  "echo ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1 >> %s" % out,
+                  "echo \#JAVA_HOME=${ORACLE_HOME}/jdk >> %s" % out,
+                  "echo 'PS1=\"`whoami`@`uname -n`:[\$PWD]`echo -e '\n\$ '`\"' >> %s" % out,
+                  "echo PATH=${ORACLE_HOME}/bin:${JAVA_HOME}/bin:$M2_HOME/bin:$PATH >> %s" % out,
+                  "echo EDITOR=vi               >> %s" % out,
+                  "echo set -o vi               >> %s" % out,
+                  "echo                >> %s" % out,
+                  "echo export ORACLE_BASE ORACLE_HOME PS1 PATH EDITOR >> %s" % out,
+                  "echo export ORACLE_HOSTNAME=localhost               >> %s" % out,
+                  "echo export ORACLE_SID=beacsid               >> %s" % out,
+                  "echo export JAVA_HOME               >> %s" % out,
+                  "echo                >> %s" % out,
+                  "chown oracle:oinstall %s" % out,
+                  "ls -la %s" % out,
+                  "cat %s" % out,
+                  ]
 
+out = "/home/oracle/.bash_profile"
+ora_bash_profile_check = [
+                  "ls -la %s" % out,
+                  "cat %s" % out,
+                  ]
+
+out = "/u01/app/oracle/product/11.2.0/db_1/network/admin/listener.ora"
+oracle_listener = [
+                   "rm %s" % out,     
+                   "echo ls -la %s" % out,
+                   "echo SID_LIST_LISTENER =               >> %s" % out,
+                   "echo \(SID_LIST = >> %s" % out,
+                   "echo   \(SID_DESC = >> %s" % out,
+                   "echo     \(SID_NAME = beacsid\)  >> %s" % out,
+                   "echo      \(ORACLE_HOME = /u01/app/oracle/product/11.2.0/db_1\) >> %s" % out,
+                   "echo      \(PROGRAM = extproc\) >> %s" % out,
+                   "echo    \) >> %s" % out,
+                   "echo   \(SID_DESC= >> %s" % out,
+                   "echo         \(GLOBAL_DBNAME=beacsid\) >> %s" % out,
+                   "echo         \(ORACLE_HOME = /u01/app/oracle/product/11.2.0/db_1\) >> %s" % out,
+                   "echo         \(SID_NAME=beacsid\) >> %s" % out,
+                   "echo   \) >> %s" % out,
+                   "echo  \) >> %s" % out,
+                   "echo >> %s" % out,
+                   "echo LISTENER = >> %s" % out,
+                   "echo  \(DESCRIPTION_LIST = >> %s" % out,
+                   "echo   \(DESCRIPTION = >> %s" % out,
+                   "echo    \(ADDRESS = \(PROTOCOL = TCP\)\(HOST = localhost\)\(PORT = 1521\)\) >> %s" % out,
+                   "echo   \) >> %s" % out,
+                   "echo  \) >> %s" % out,
+                   "chown oracle:oinstall %s" % out,
+                   "ls -la %s" % out,
+                   "cat %s" % out,
+                   ]
+
+out = "/u01/app/oracle/product/11.2.0/db_1/network/admin/tnsnames.ora"
+ora_tnsnames = [
+                "rm %s" % out,     
+                "echo ls -la %s" % out,
+                "echo  BEACSID = >> %s" % out,
+                "echo   \(DESCRIPTION = >> %s" % out,
+                "echo    \(ADDRESS = \(PROTOCOL = TCP\)\(HOST = localhost\)\(PORT = 1521\)\) >> %s" % out,
+                "echo    \(CONNECT_DATA = >> %s" % out,
+                "echo     \(SERVER = DEDICATED\) >> %s" % out,
+                "echo     \(SERVICE_NAME = beacsid\) >> %s" % out,
+                "echo    \) >> %s" % out,
+                "echo   \) >> %s" % out,
+                "echo  >> %s" % out,
+                "chown oracle:oinstall %s" % out,
+                "ls -la %s" % out,
+                "cat %s" % out,
+                ]

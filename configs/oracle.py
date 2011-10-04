@@ -15,16 +15,16 @@ user = "root"             #user of the ami's
 import cmds
 
 commands = cmds.kill_java_python \
-            + cmds.clean_home \
+            + cmds.ora_bash_profile_check \
+            + cmds.oracle_listener \
+            + cmds.ora_tnsnames  \
             + cmds.getCreateRcLocal("oracle") \
             + cmds.deploy_igniter \
-            + cmds.install_jdk_16_26 \
-            + cmds.install_jdk_16_27 \
-            + cmds.install_jdk_17_00 \
             + cmds.install_bamboo_assembly \
-            + cmds.install_s3_cmd       
+            + cmds.install_s3_cmd \
 
-commands = cmds.removeSudo(commands)
+commands = cmds.changeCommands(commands, "sudo ", "")
+commands = cmds.changeCommands(commands, "$HOME ", "/home/oracle")
 
 
 #old /etc/rc.local
