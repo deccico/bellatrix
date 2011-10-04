@@ -7,7 +7,7 @@ amis = [
        ]
 
 #common variables
-burn_ami_at_the_end=True    #decide whether or not burning the images at the end
+burn_ami_at_the_end=False   #decide whether or not burning the images at the end
 skip_me = False             #decide whether to skip or not this configuration
 user = "root"             #user of the ami's 
 
@@ -66,3 +66,22 @@ commands = cmds.changeCommands(commands, "$HOME ", "/home/oracle")
 ##starting bamboo agent
 #cd /home/oracle/
 #su -c /home/oracle/run_bambooner_run.py  - oracle
+
+
+#now:
+#
+#root@ip-10-40-62-7:[/etc/init.d]
+#$ cat runBam
+##!/bin/sh -e
+## chkconfig: 2345 95 20
+## description: igniter
+## start Igniter script to connect to Bamboo
+## processname: igniter
+#
+#
+#ulimit -n 8192
+#cd /home/oracle
+#su -c /home/oracle/igniter.py - oracle
+#root@ip-10-40-62-7:[/etc/init.d]
+#
+#then chkconfig --add runBam

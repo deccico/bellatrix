@@ -3,8 +3,8 @@ This is part of the normal Bellatrix process. The new configuration will be burn
 
 #list of ami's to process with the below cmds
 amis = [
-       ["ami-dc8870b5", "Win2008-IE9-FF4-CHR-SF-x64"],
        ["ami-7ce61b15", "Windows-2008-IE8-x64"],
+       ["ami-dc8870b5", "Win2008-IE9-FF4-CHR-SF-x64"],
        ["ami-8248b1eb", "Windows-2008-Active-Directory-x64"],
        ]
 
