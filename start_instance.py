@@ -56,43 +56,6 @@ class Run():
         inst = self._ec2.startInstance(image, key_name, security_group, instance_type, APP, instance_initiated_shutdown_behavior="terminate")
         return inst
 
-    def getConfigs(self):
-        """get configurations from 'configs' directory"""
-        import configs
-        cfgpath = os.path.dirname(configs.__file__)
-        dir = os.path.basename(cfgpath)
-        return [name for _, name, _ in pkgutil.iter_modules([cfgpath])]
-        
-    def executeCommands(self, user, dns, key, commands, config):
-        results = []
-        errors = []
-        for c in commands:
-            cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, c, OUT_TMP)
-            logging.info("executing: " + cmd)
-            res = os.system(cmd)
-            out = open(OUT_TMP).read()
-            cmd_res = [cmd, out, res, config]
-            results.append(cmd_res)
-            logging.info("result: " + str(res) + " output: " + out)
-            #increment errors if necessary
-            if res != 0:
-                errors.append(cmd_res)
-        logging.info("Commands executions: %s Errors: %s" % (len(commands), len(errors)))
-        return results, errors
-
-    def printErrors(self, errors):                
-        logging.warning("The following commands failed its execution:")
-        for e in errors:
-            logging.warning("config: %s cmd: %s exit code: %s" % (e[3], e[0], e[2])) 
-            logging.warning("last 500 chars output: %s" % e[1][-500:]) 
-            
-    def saveReport(self, results, config):                
-        logging.info("Saving report")
-        report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat()
-        with open(report_name, "w") as f:
-            for r in results:
-                f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
-
     def startInstance(self, ami, type):
         inst = self.getEc2Instance(ami, "elasticbamboo", ["elasticbamboo"], type)
         dns_name = self._ec2.getDNSName(inst)

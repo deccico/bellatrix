@@ -75,6 +75,16 @@ class Ec2lib:
         logging.info("burning instance: %s name: %s, description: %s" % (instance_id, name, description))
         return self.ec2.create_image(instance_id, name, description, no_reboot)
 
+    def getAmiInfo(ami):
+        ret = None
+        try:
+            ret = image = self.getImage(a)
+            logging.info("image info: %s" + image)
+            
+        except:
+            logging.error("Error getting information for image:%s " % ami)
+        return ret
+
     def startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
         """
         starts an instance given an 'image' object
@@ -203,17 +213,27 @@ class Ec2lib:
             raise Exception("Sorry, but the instance never got ready for SSH connections")
         logging.info("Instance %s is ready for receiving ssh connections. %s" % (inst.id, open(tmp_file).read()))
 
-    def setPermissionsToAmis(self, amis, account_permissions):
+    def setPermissionsToAmis(self, amis, account_permissions, retry=True):
         """set account permissions to a set of ami's"""
-        for a in amis:
+        i=0
+        WAIT = 30
+        while i < len(amis):
             try:
-                image = self.getImage(a)
-                logging.info("setting execute permissions to %s for accounts:%s" % (a,account_permissions))
+                image = self.getImage(amis[i])
+                if image==None:
+                    logging.info("Image doesn't exist in this acount. Finishing execution.")
+                    break
+                logging.info("image information:%s" % image)
+                logging.info("setting execute permissions to %s for accounts:%s" % (amis[i],account_permissions))
                 res=image.set_launch_permissions(account_permissions)
                 logging.info("operation result:%s " % res )
+                i += 1
             except:
                 logging.exception("Error setting permissions to ami:%s Please check whether " \
-                                  "it exists or your account has proper permissions to access it." % a)     
+                                  "it exists or your account has proper permissions to access it." % amis[i])
+                if retry:
+                    logging.info("retrying execution in %s seconds." % WAIT)
+                    time.sleep(WAIT)
                 
                   
 
