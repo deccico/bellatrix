@@ -80,7 +80,7 @@ def run(name):
 
 if __name__ == '__main__':
     logging.info("starting %s" % APP)
-    security_group_name = sys.argv[1] if len(sys.argv) > 1 else 'elasticbamboo' 
+    security_group_name = sys.argv[1]
     run(security_group_name)
     logging.info("%s has finished" % APP)
 
