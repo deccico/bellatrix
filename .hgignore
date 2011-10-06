@@ -10,3 +10,4 @@ tmp
 reports
 account_permissions
 .*~
+.*_list

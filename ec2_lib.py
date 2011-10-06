@@ -190,6 +190,7 @@ class Ec2lib:
     def waitUntilInstanceIsReady(self, inst, TIME_OUT=300):
         logging.info("waiting until instance: " + inst.id + " is ready. Time out is: " + str(TIME_OUT) + " seconds...")
         step = 3
+        #todo: make this concurrent
         while (inst.state !=  self._running_state and TIME_OUT > 0):
             TIME_OUT -= step
             inst.update()
@@ -234,8 +235,38 @@ class Ec2lib:
                 if retry:
                     logging.info("retrying execution in %s seconds." % WAIT)
                     time.sleep(WAIT)
-                
-                  
 
+    def getSecurityGroups(self, groupnames=None):
+        """get all security groups from this account"""
+        #the following call should return something like:
+        #[SecurityGroup:alfresco, SecurityGroup:apache, SecurityGroup:vnc,
+        #SecurityGroup:appserver2, SecurityGroup:FTP, SecurityGroup:webserver,
+        #SecurityGroup:default, SecurityGroup:test-1228851996]
+        #>>> us_group = groups[0]
+        #>>> us_group
+        #SecurityGroup:alfresco
+        #>>> us_group.rules
+        #[IPPermissions:tcp(22-22), IPPermissions:tcp(80-80), IPPermissions:tcp(1445-1445)]
+        return self.ec2.get_all_security_groups(groupnames)
+    
+    def authorizeSecurityGroup(self, securityGroup, cidr_ip, from_port, to_port=None, ip_protocol='tcp'):
+        to_port = (from_port if to_port == None else to_port)
+        logging.info("authorizing... security group:%s, ip_protocol:%s, from_port:%s, to_port:%s cidr:%s" % 
+                     (securityGroup, ip_protocol, from_port, to_port, cidr_ip))
+        try:
+            securityGroup.authorize(ip_protocol=ip_protocol, from_port=from_port, to_port=to_port, cidr_ip=cidr_ip)
+        except:    
+            logging.exception("Exception applying authorization..")
+    
+    def revokeAllSecurityGroupRules(self, sg):
+        logging.info("revoking permissions from security group:%s " % sg)
+        for r in sg.rules:
+            for g in r.grants:
+                #todo detect whether is a security group or an ip
+                logging.info("revoking.. sg:%s, ip_protocol:%s, from_port:%s, to_port:%s, cidr:%s" % 
+                     (sg, r.ip_protocol, r.from_port, r.to_port, g))
+                status = sg.revoke(r.ip_protocol, r.from_port, r.to_port, g)
+                logging.info("status: %s" % status)
 
-
+        
+        
