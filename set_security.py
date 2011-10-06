@@ -51,28 +51,38 @@ class Run():
         self.SKIP_ME = "skip_me"
         self.ACCOUNT_LEN = 12
     
-    def getAccountPermissions(self, perm_file):
-        """"Return list of accounts where new ami's will get execute permissions"""
+    #todo: move this to an util file
+    def getStringsFromFile(self, list_file):
+        """"Return list from file ignoring blanks and comments"""
         l = []
-        with open(perm_file) as f:
+        with open(list_file) as f:
              for line in f:
                  line=line.strip()
-                 if len(line)==self.ACCOUNT_LEN:
+                 if len(line) > 0 and not line.startswith("#"):
+                     logging.debug("adding item: %s" % line)
                      l.append(line)
-        logging.info("accounts from %s: %s" % (perm_file,l))
         return l
     
-    def setPermissions(self, amis, permissions):
-        self._ec2.setPermissionsToAmis(amis, permissions)
+    def setSecurityGroupAuth(self, name, ports, cidrs):
+        ports = self.getStringsFromFile(ports)
+        cidrs = self.getStringsFromFile(cidrs)
+        sg = self._ec2.getSecurityGroups(name)[0]
+        self._ec2.revokeAllSecurityGroupRules(sg)
+        for p in ports:
+            for c in cidrs:
+                self._ec2.authorizeSecurityGroup(sg, c, p)
                      
 
-def run(ami):
+def run(name):
     r = Run(KEY, SECRET, APP, PK)
-    r.setPermissions(ami.split(","), r.getAccountPermissions("account_permissions"))
+    r.setSecurityGroupAuth(name, CUR_DIR + os.path.sep + "ports_list", 
+                           CUR_DIR + os.path.sep + "cidrs_list")
 
 if __name__ == '__main__':
     logging.info("starting %s" % APP)
-    ami = sys.argv[1]
-    run(ami)
+    security_group_name = sys.argv[1] if len(sys.argv) > 1 else 'elasticbamboo' 
+    run(security_group_name)
     logging.info("%s has finished" % APP)
+
+
 
