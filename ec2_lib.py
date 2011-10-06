@@ -249,12 +249,15 @@ class Ec2lib:
         #[IPPermissions:tcp(22-22), IPPermissions:tcp(80-80), IPPermissions:tcp(1445-1445)]
         return self.ec2.get_all_security_groups(groupnames)
     
-    def authorizeSecurityGroup(self, securityGroup, cidr_ip, from_port, to_port=None, ip_protocol='tcp'):
+    def authorizeSecurityGroup(self, securityGroup, cidr_ip, from_port, security_group=None, to_port=None, ip_protocol='tcp'):
         to_port = (from_port if to_port == None else to_port)
-        logging.info("authorizing... security group:%s, ip_protocol:%s, from_port:%s, to_port:%s cidr:%s" % 
-                     (securityGroup, ip_protocol, from_port, to_port, cidr_ip))
+        logging.info("authorizing... security group:%s, ip_protocol:%s, from_port:%s, to_port:%s cidr:%s sg:%s" % 
+                     (securityGroup, ip_protocol, from_port, to_port, cidr_ip, security_group))
         try:
-            securityGroup.authorize(ip_protocol=ip_protocol, from_port=from_port, to_port=to_port, cidr_ip=cidr_ip)
+            if cidr_ip != None:
+                securityGroup.authorize(ip_protocol=ip_protocol, from_port=from_port, to_port=to_port, cidr_ip=cidr_ip)
+            else:
+                securityGroup.authorize(ip_protocol=ip_protocol, src_group=security_group, from_port=from_port, to_port=to_port, cidr_ip=cidr_ip)
         except:    
             logging.exception("Exception applying authorization..")
     

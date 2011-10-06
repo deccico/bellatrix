@@ -71,6 +71,8 @@ class Run():
         for p in ports:
             for c in cidrs:
                 self._ec2.authorizeSecurityGroup(sg, c, p)
+            #allow same instances connection
+            self._ec2.authorizeSecurityGroup(sg, None, p, sg)
                      
 
 def run(name):
