@@ -22,5 +22,6 @@ commands = cmds.kill_java_python \
             + cmds.install_jdk_16_27 \
             + cmds.install_jdk_17_00 \
             + cmds.install_bamboo_assembly \
-            + cmds.install_s3_cmd       
+            + cmds.install_s3_cmd \
+            + cmds.increase_ubuntu_swap       
 
