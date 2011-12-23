@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-
+import sys, re
 from distutils.core import setup, Extension
 
-version = open('VERSION.txt').read()
-
+#getting the version from: v<0.5.0dev>, <2011/11/23> -- testing packaging....
+version = re.search(r"\<(.*)\>\s*,.*", open('VERSION.txt').read()).group(1)
 
 if sys.version_info <= (2, 4):
     error = "ERROR: Bellatrix requires Python Version 2.5 or above...exiting."
@@ -25,8 +25,6 @@ setup(name='bellatrix',
       
       packages=['bellatrix'],
 
-      data_files = files,       
-      
       scripts=['bin/bewitch_ami',
                'bin/burn_instance',
                'bin/set_permissions',
@@ -52,5 +50,4 @@ setup(name='bellatrix',
                      'Topic :: Software Development :: Libraries :: Python Modules',
                      'Topic :: Utilities',
                    ],
-      **extra
       )

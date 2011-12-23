@@ -1,3 +1,4 @@
+MANIFEST
 .project
 .pydevproject
 accesskey
@@ -11,3 +12,4 @@ reports
 account_permissions
 .*~
 .*_list
+dist
