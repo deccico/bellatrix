@@ -3,7 +3,7 @@ import sys, re
 from distutils.core import setup, Extension
 
 #getting the version from: v<0.5.0dev>, <2011/11/23> -- testing packaging....
-version = re.search(r"\<(.*)\>\s*,.*", open('VERSION.txt').read()).group(1)
+version = "0.5.5"
 
 if sys.version_info <= (2, 4):
     error = "ERROR: Bellatrix requires Python Version 2.5 or above...exiting."

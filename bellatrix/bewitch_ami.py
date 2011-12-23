@@ -37,7 +37,7 @@ SECRET = open("secret").read().strip()
 KEY = open("key").read().strip()
 CONFIG_DIR = "./configs"  #todo get the path from the script
 OUT_TMP = "exec.tmp"
-CUR_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
+CUR_DIR = os.path.abspath(os.getcwd())
 PK = "ec2.pk" #path to the private key to connect to agents
 if sys.platform != "cygwin": #for some reason ssh cygwin doesn't support the full path for the pk
     PK = CUR_DIR + os.path.sep + PK  
@@ -180,12 +180,12 @@ class Run():
 
     
 def run(args):
+    logging.info("starting %s" % APP)
     r = Run(KEY, SECRET, APP, PK, REPORTS_DIR)
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
     r.run(config)
+    logging.info("%s has finished" % APP)
 
 if __name__ == '__main__':
-    logging.info("starting %s" % APP)
     run(sys.argv)
-    logging.info("%s has finished" % APP)
 
