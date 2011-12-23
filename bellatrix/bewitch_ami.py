@@ -139,15 +139,20 @@ class Run():
     def run(self, config):
         """execute a configuration"""
         amis_burned = []
-        errors = [] 
+        errors = []
         if config == self.ALL_CONFIGS:
             configs = self.getConfigs()
         else:
             configs = [config]
+        sys.path = [CUR_DIR] + sys.path
         for cfg in configs:
-            logging.info("processing: " + cfg)
-            c = __import__(os.path.basename(CONFIG_DIR) + "." + cfg)
-            mod = "c." + cfg + "."
+            logging.info("processing: " + cfg + " in: " + os.getcwd())
+            if config == self.ALL_CONFIGS:
+                c = __import__(os.path.basename(CONFIG_DIR) + "." + cfg)
+                mod = "c." + cfg + "."
+            else:
+                c = __import__(cfg)
+                mod = "c."
             skip_me = eval(mod + self.SKIP_ME)
             if skip_me:
                 logging.info("skipping execution of config: %s due to its configuration skip_me=true" % cfg)
