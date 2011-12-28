@@ -26,23 +26,15 @@ SECRET = open("secret").read().strip()
 KEY = open("key").read().strip()
 CONFIG_DIR = "./configs"  #todo get the path from the script
 OUT_TMP = "exec.tmp"
-CUR_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-PK = CUR_DIR + os.path.sep + "ec2.pk"  #path to the private key to connect to agents
-REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
-    def __init__(self, key, sec, app_name, pk, ami, type): #todo move all the globals here
-        self.checkPkFile(pk)
+    def __init__(self, key, sec, app_name, ami, type): #todo move all the globals here
         self._ec2 = Ec2lib(KEY, SECRET) 
         self._app_name = app_name
         self.CMD_OK = 0
         self.define_constants()
         self.startInstance(ami, type)
 
-    def checkPkFile(self, pk):
-        if not os.path.isfile(pk): #todo add more validations (in a method)
-            raise Exception("%s does not contain the private key file" % pk)
-        
     def define_constants(self):
         """define class constants to access ami configs"""
         self.AMIS = "amis"
@@ -61,16 +53,18 @@ class Run():
         dns_name = self._ec2.getDNSName(inst)
         self._ec2.waitUntilInstanceIsReady(inst)
 
-def run(ami, type):
-    r = Run(KEY, SECRET, APP, PK, ami, type)
-
-if __name__ == '__main__':
+def run(args):
     logging.info("starting %s" % APP)
-    ami = sys.argv[1]
-    if len(sys.argv) < 3:
+    ami = args[1]
+    if len(args) < 3:
         type = 'm1.large'
     else:
-        type = sys.argv[2]
-    run(ami, type)
+        type = args[2]
+    r = Run(KEY, SECRET, APP, ami, type)
     logging.info("%s has finished" % APP)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(run(sys.argv))
 

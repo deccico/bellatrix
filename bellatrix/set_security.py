@@ -75,16 +75,19 @@ class Run():
             self._ec2.authorizeSecurityGroup(sg, None, p, sg)
                      
 
-def run(name):
+def run(args):
+    logging.info("starting %s" % APP)
+    security_group_name = args[1]
     r = Run(KEY, SECRET, APP, PK)
     r.setSecurityGroupAuth(name, CUR_DIR + os.path.sep + "ports_list", 
                            CUR_DIR + os.path.sep + "cidrs_list")
+    logging.info("%s has finished" % APP)
+    return 0
+
+    
 
 if __name__ == '__main__':
-    logging.info("starting %s" % APP)
-    security_group_name = sys.argv[1]
-    run(security_group_name)
-    logging.info("%s has finished" % APP)
+    sys.exit(run(sys.argv))
 
 
 

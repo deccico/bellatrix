@@ -4,4 +4,4 @@ import bellatrix.bewitch_ami
 import sys
 
 if __name__ == '__main__':
-	bellatrix.bewitch_ami.run(sys.argv)
+	sys.exit(bellatrix.bewitch_ami.run(sys.argv))

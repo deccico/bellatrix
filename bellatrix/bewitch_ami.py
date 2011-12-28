@@ -194,8 +194,8 @@ def run(args):
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
     exit_code = r.run(config)
     logging.info("%s has finished" % APP)
-    sys.exit(exit_code)
+    return exit_code
 
 if __name__ == '__main__':
-    run(sys.argv)
+    sys.exit(run(sys.argv))
 

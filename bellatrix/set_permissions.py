@@ -66,13 +66,15 @@ class Run():
         self._ec2.setPermissionsToAmis(amis, permissions)
                      
 
-def run(ami):
+def run(args):
+    logging.info("starting %s" % APP)
+    ami = args[1]
     r = Run(KEY, SECRET, APP, PK)
     r.setPermissions(ami.split(","), r.getAccountPermissions("account_permissions"))
+    logging.info("%s has finished" % APP)
+    return 0
+
 
 if __name__ == '__main__':
-    logging.info("starting %s" % APP)
-    ami = sys.argv[1]
-    run(ami)
-    logging.info("%s has finished" % APP)
+    sys.exit(run(sys.argv))
 
