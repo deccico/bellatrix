@@ -97,7 +97,9 @@ class Run():
         logging.info("Commands executions: %s Errors: %s" % (len(commands), len(errors)))
         return results, errors
 
-    def printErrors(self, errors):                
+    def printErrors(self, errors):
+        if len(errors) < 1:
+            return                
         logging.warning("The following commands failed its execution:")
         for e in errors:
             logging.warning("config: %s cmd: %s exit code: %s" % (e[3], e[0], e[2])) 
@@ -124,7 +126,7 @@ class Run():
             r, e = self.executeCommands(user, inst.dns_name, PK, commands, config_name)
             self.saveReport(r, config_name)
             errors += e
-            if e > 0:
+            if len(e) > 0:
                 logging.warning("There were errors while executing the commands. Not burning the instance...")
             else:
                 if burn_at_the_end:
