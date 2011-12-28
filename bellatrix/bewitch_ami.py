@@ -173,7 +173,7 @@ class Run():
         logging.info("total of ami's burned:%s" % len(amis_burned))
         for a in amis_burned:
             logging.info(str(a))
-        return 0 if errors==0 else 1
+        return 0 if len(errors)==0 else 1
 
     def getAccountPermissions(self, perm_file="account_permissions"):
         """"Return list of accounts where new ami's will get execute permissions"""
