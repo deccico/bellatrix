@@ -32,7 +32,6 @@ REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
     def __init__(self, key, sec, app_name, pk): #todo move all the globals here
-        self.checkPkFile(pk)
         self._ec2 = Ec2lib(KEY, SECRET) 
         self._app_name = app_name
         self.CMD_OK = 0
