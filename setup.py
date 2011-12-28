@@ -2,7 +2,6 @@
 import sys, re
 from distutils.core import setup, Extension
 
-#getting the version from: v<0.5.0dev>, <2011/11/23> -- testing packaging....
 version = "0.0.4-test"
 
 if sys.version_info <= (2, 4):
