@@ -3,7 +3,7 @@ import sys, re
 from distutils.core import setup, Extension
 
 #getting the version from: v<0.5.0dev>, <2011/11/23> -- testing packaging....
-version = "0.0.2-test"
+version = "0.0.4-test"
 
 if sys.version_info <= (2, 4):
     error = "ERROR: Bellatrix requires Python Version 2.5 or above...exiting."
@@ -33,6 +33,9 @@ setup(name='bellatrix',
                ],
 
       platforms = "Posix; MacOS X; Windows",
+      
+      #http://packages.python.org/distribute/setuptools.html#declaring-dependencies
+      install_requires = ['boto==2.1.1'],
 
       #classifiers from http://pypi.python.org/pypi?:action=list_classifiers
       classifiers = [
