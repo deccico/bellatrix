@@ -32,17 +32,12 @@ REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
     def __init__(self, key, sec, app_name, pk, instance, config_name): #todo move all the globals here
-        self.checkPkFile(pk)
         self._ec2 = Ec2lib(KEY, SECRET) 
         self._app_name = app_name
         self.CMD_OK = 0
         self.define_constants()
         self.burnInstance(instance, config_name)
 
-    def checkPkFile(self, pk):
-        if not os.path.isfile(pk): #todo add more validations (in a method)
-            raise Exception("%s does not contain the private key file" % pk)
-        
     def define_constants(self):
         """define class constants to access ami configs"""
         self.AMIS = "amis"
