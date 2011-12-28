@@ -168,6 +168,7 @@ class Run():
         logging.info("total of ami's burned:%s" % len(amis_burned))
         for a in amis_burned:
             logging.info(str(a))
+        return len(errors)
 
     def getAccountPermissions(self, perm_file="account_permissions"):
         """"Return list of accounts where new ami's will get execute permissions"""
@@ -188,8 +189,9 @@ def run(args):
     logging.info("starting %s" % APP)
     r = Run(KEY, SECRET, APP, PK, REPORTS_DIR)
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
-    r.run(config)
+    exit_code = r.run(config)
     logging.info("%s has finished" % APP)
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
     run(sys.argv)
