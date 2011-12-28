@@ -21,8 +21,6 @@ import pkgutil
 import re
 import sys
 
-from lib.util import *
-
 APP="Bellatrix"
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(level=logging.INFO,
