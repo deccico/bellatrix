@@ -21,6 +21,8 @@ import pkgutil
 import re
 import sys
 
+from lib.util import *
+
 APP="Bellatrix"
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(level=logging.INFO,
@@ -105,7 +107,7 @@ class Run():
             
     def saveReport(self, results, config):                
         logging.info("Saving report")
-        report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat()
+        report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat() + ".txt"
         with open(report_name, "w") as f:
             for r in results:
                 f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
