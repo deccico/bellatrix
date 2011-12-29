@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 import sys, re
 from distutils.core import setup, Extension
-
-version = "0.0.15"
+from bellatrix import __version__
 
 if sys.version_info <= (2, 4):
     error = "ERROR: Bellatrix requires Python Version 2.5 or above...exiting."
@@ -11,7 +10,7 @@ if sys.version_info <= (2, 4):
 
 
 setup(name='bellatrix',
-      version=version,
+      version=__version__,
       long_description=open('README.txt').read(),
       description='Bellatrix is a comprehensive set of tools to automate the management of EC2 ami''s and instances.',
 
