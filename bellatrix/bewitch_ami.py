@@ -67,6 +67,7 @@ class Run():
         self.SKIP_ME = "skip_me"
         self.ALL_CONFIGS = "all"
         self.ACCOUNT_LEN = 12
+        self.CMD = "command"
     
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self._ec2.getImage(ami)  
@@ -75,6 +76,7 @@ class Run():
 
     def getConfigs(self):
         """get configurations from 'configs' directory"""
+        #TODO: test this with the new splitted env
         import configs
         cfgpath = os.path.dirname(configs.__file__)
         dir = os.path.basename(cfgpath)
@@ -83,12 +85,13 @@ class Run():
     def executeCommands(self, user, dns, key, commands, config):
         results = []
         errors = []
+        context = {'key': key, 'user':user, 'dns':dns, 'out_tmp': OUT_TMP}
         for c in commands:
-            cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, c, OUT_TMP)
-            
-            #>>> print '%(language)s has %(number)03d quote types.' % \
-            #{"language": "Python", "number": 2}
-
+            if 'dict' in str(type(c)):
+                cmd = c[self.CMD] % context
+            else:
+                cmd = "ssh -o StrictHostKeyChecking=no -i %(key)s %(user)s@%(dns)s '%(cmd)s' > %(out_tmp)s" % \
+                dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
             out = open(OUT_TMP).read()
@@ -184,10 +187,10 @@ class Run():
         """"Return list of accounts where new ami's will get execute permissions"""
         l = []
         with open(perm_file) as f:
-             for line in f:
-                 line=line.strip()
-                 if len(line)==self.ACCOUNT_LEN:
-                     l.append(line)
+            for line in f:
+                line=line.strip()
+                if len(line)==self.ACCOUNT_LEN:
+                    l.append(line)
         logging.info("accounts from %s: %s" % (perm_file,l))
         return l
     
