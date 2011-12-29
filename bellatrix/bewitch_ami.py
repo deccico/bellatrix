@@ -94,6 +94,7 @@ class Run():
             #increment errors if necessary
             if res != 0:
                 errors.append(cmd_res)
+                break
         logging.info("Commands executions: %s Errors: %s" % (len(commands), len(errors)))
         return results, errors
 
