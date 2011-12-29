@@ -85,6 +85,10 @@ class Run():
         errors = []
         for c in commands:
             cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, c, OUT_TMP)
+            
+            #>>> print '%(language)s has %(number)03d quote types.' % \
+            #{"language": "Python", "number": 2}
+
             logging.info("executing: " + cmd)
             res = os.system(cmd)
             out = open(OUT_TMP).read()

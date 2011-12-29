@@ -2,7 +2,7 @@
 import sys, re
 from distutils.core import setup, Extension
 
-version = "0.0.13"
+version = "0.0.15"
 
 if sys.version_info <= (2, 4):
     error = "ERROR: Bellatrix requires Python Version 2.5 or above...exiting."
