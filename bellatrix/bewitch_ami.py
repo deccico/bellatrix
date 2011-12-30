@@ -90,7 +90,7 @@ class Run():
             if 'dict' in str(type(c)):
                 cmd = c[self.CMD] % context
             else:
-                cmd = "ssh -o StrictHostKeyChecking=no -i %(key)s %(user)s@%(dns)s '%(command)s' 2>&1 | tee  %(out_tmp)s;exit $?" % \
+                cmd = "ssh -o StrictHostKeyChecking=no -i %(key)s %(user)s@%(dns)s '%(command)s' 2>&1 | tee  %(out_tmp)s;let RET=$?;exit $RET" % \
                 dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
