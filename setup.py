@@ -23,7 +23,8 @@ setup(name='bellatrix',
       
       packages=['bellatrix'],
 
-      scripts=['bin/bewitch_ami',
+      scripts=['bin/bellatrix',
+               'bin/bewitch_ami',
                'bin/burn_instance',
                'bin/set_permissions',
                'bin/set_security',
@@ -33,7 +34,7 @@ setup(name='bellatrix',
       platforms = "Posix; MacOS X; Windows",
       
       #http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-      install_requires = ['boto==2.1.1'],
+      install_requires = ['boto==2.1.1', 'argparse>=1.1'],
 
       #classifiers from http://pypi.python.org/pypi?:action=list_classifiers
       classifiers = [

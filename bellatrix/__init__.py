@@ -1,1 +1,4 @@
-__version__ = '0.0.23'
+#Constants
+
+APP = "Bellatrix"
+__version__ = '0.0.24'
