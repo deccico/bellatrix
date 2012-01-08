@@ -95,14 +95,12 @@ class Run():
         logging.info("ami: %s is being generated for configuration: %s" 
                      % (new_ami, config_name))
 
-def run(args):
+def run(instance, config_name):
     logging.info("starting %s" % APP)
-    instance = args[1]
-    config_name = args[2]
     r = Run(KEY, SECRET, APP, PK, instance, config_name)
     logging.info("%s has finished" % APP)
     return 0
 
 if __name__ == '__main__':
-    sys.exit(run(sys.argv))
+    sys.exit(run(sys.argv[1], sys.argv[2]))
 

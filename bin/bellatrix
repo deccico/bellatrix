@@ -1,8 +1,17 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
 import bellatrix
 
+
+def provision(args):
+	print "provisioning..."
+	sys.exit(bellatrix.bewitch_ami.run(args.configuration))
+
+def burn(args):
+	print "burning..."
+	sys.exit(bellatrix.burn_instance.run(args.instamce, args.image_name))
 
 
 def main():
@@ -13,25 +22,19 @@ def main():
 									version= bellatrix.APP + " " + bellatrix.__version__)
 	subparsers = parser.add_subparsers()
 	
-	parser_provision = subparsers.add_parser('provision')
-	parser_provision.add_argument('configuration', action='store')
+	parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running instance')
+	parser_provision.add_argument('configuration', help='Configuration file.')
+	parser_provision.set_defaults(func=provision)
 
-	parser_burn = subparsers.add_parser('burn')
-	parser_burn.add_argument('instance', action='store')
+	parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
+	parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4')
+	parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the name.')
+	parser_burn.set_defaults(func=burn)
 
 
-	args = vars(parser.parse_args())
+	args = parser.parse_args()
+	args.func(args)
 	
-	if args.has_key('aa'): ..
-
-	#print "printing args..."
-	#print str(args)
-
 
 if __name__ == "__main__":
 	main()
-
-
-
-
-
