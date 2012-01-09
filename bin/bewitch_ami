@@ -1,7 +1,0 @@
-#!/usr/bin/env python
-
-import bellatrix.bewitch_ami
-import sys
-
-if __name__ == '__main__':
-	sys.exit(bellatrix.bewitch_ami.run(sys.argv))

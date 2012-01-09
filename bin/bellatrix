@@ -5,8 +5,8 @@ import sys
 import bellatrix
 
 
-def provision(args):
-	print "provisioning..."
+def bewitch(args):
+	print "bewitching..."
 	sys.exit(bellatrix.bewitch_ami.run(args.configuration))
 
 def burn(args):
@@ -22,9 +22,9 @@ def main():
 									version= bellatrix.APP + " " + bellatrix.__version__)
 	subparsers = parser.add_subparsers()
 	
-	parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running instance')
-	parser_provision.add_argument('configuration', help='Configuration file.')
-	parser_provision.set_defaults(func=provision)
+	parser_bewitch = subparsers.add_parser('bewitch', help='Applies a configuration to a running instance')
+	parser_bewitch.add_argument('configuration', help='Configuration file.')
+	parser_bewitch.set_defaults(func=bewitch)
 
 	parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
 	parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4')
