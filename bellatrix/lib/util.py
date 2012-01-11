@@ -2,7 +2,9 @@
 general utility functions
 '''
 
+import os
 import xml.dom.minidom
+
 
 
 def getNodeValue(dom, nodename):
@@ -40,3 +42,6 @@ def getConfigDir(app_name):
 def getConfigFileContent(file_name, app_name):
     content = None
     return content
+
+def getHome():
+    return os.path.expanduser('~') or os.getenv('USERPROFILE') or os.getenv('HOME')

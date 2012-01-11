@@ -21,7 +21,10 @@ import pkgutil
 import re
 import sys
 
-APP="Bellatrix"
+import bellatrix
+from bellatrix.lib.util import *
+from bellatrix.lib.bellatrix_util import *
+
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(level=logging.INFO,
                     format=FORMAT,
@@ -32,21 +35,10 @@ logging.basicConfig(level=logging.INFO,
 from boto.ec2.connection import EC2Connection
 from ec2_lib import Ec2lib
 
-#this script needs "secret" and "key" files in the current path
-SECRET = open("secret").read().strip()
-KEY = open("key").read().strip()
-CONFIG_DIR = "./configs"  #todo get the path from the script
-OUT_TMP = "exec.tmp"
-CUR_DIR = os.path.abspath(os.getcwd())
-PK = "ec2.pk" #path to the private key to connect to agents
-if sys.platform != "cygwin": #for some reason ssh cygwin doesn't support the full path for the pk
-    PK = CUR_DIR + os.path.sep + PK  
-REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
-
 class Run():
-    def __init__(self, key, sec, app_name, pk, reports): #todo move all the globals here
+    def __init__(self, app_name, pk, reports): #todo move all the globals here
         self.checkPkFile(pk)
-        self._ec2 = Ec2lib(KEY, SECRET) 
+        self._ec2 = Ec2lib(getKey(), getSecret()) 
         self._app_name = app_name
         self.CMD_OK = 0
         self.define_constants()
@@ -71,7 +63,7 @@ class Run():
     
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self._ec2.getImage(ami)  
-        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, APP, instance_initiated_shutdown_behavior="terminate")
+        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, bellatrix.APP, instance_initiated_shutdown_behavior="terminate")
         return inst
 
     def getConfigs(self):
