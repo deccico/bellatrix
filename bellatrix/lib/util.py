@@ -45,3 +45,6 @@ def getConfigFileContent(file_name, app_name):
 
 def getHome():
     return os.path.expanduser('~') or os.getenv('USERPROFILE') or os.getenv('HOME')
+
+def getCurDir():
+    return os.path.abspath(os.getcwd())

@@ -36,20 +36,18 @@ from boto.ec2.connection import EC2Connection
 from ec2_lib import Ec2lib
 
 class Run():
-    def __init__(self, app_name, pk, reports): #todo move all the globals here
-        self.checkPkFile(pk)
-        self._ec2 = Ec2lib(getKey(), getSecret()) 
+    def __init__(self, key, sec, app_name, pk, reports): 
+        checkPkFile(pk)
+        self._ec2 = Ec2lib(key, sec) 
+        #todo: take a look at: http://stackoverflow.com/questions/1389180/python-automatically-initialize-instance-variables
+        self.key = key
+        self.sec = sec
+        self.pk = pk
         self._app_name = app_name
         self.CMD_OK = 0
         self.define_constants()
         self.reports = reports
-        if not os.path.isdir(reports):
-            os.makedirs(reports)
 
-    def checkPkFile(self, pk):
-        if not os.path.isfile(pk): #todo add more validations (in a method)
-            raise Exception("%s does not contain the private key file" % pk)
-        
     def define_constants(self):
         """define class constants to access ami configs"""
         self.AMIS = "amis"
@@ -77,7 +75,7 @@ class Run():
     def executeCommands(self, user, dns, key, commands, config):
         results = []
         errors = []
-        context = {'key': key, 'user':user, 'dns':dns, 'out_tmp': OUT_TMP}
+        context = {'key': key, 'user':user, 'dns':dns, 'out_tmp': bellatrix.OUT_TMP}
         for c in commands:
             if 'dict' in str(type(c)):
                 cmd = c[self.CMD] % context
@@ -86,7 +84,7 @@ class Run():
                 dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
-            out = open(OUT_TMP).read()
+            out = open(bellatrix.OUT_TMP).read()
             cmd_res = [cmd, out, res, config]
             results.append(cmd_res)
             logging.info("result: " + str(res) + " output: " + out)
@@ -122,8 +120,8 @@ class Run():
             inst = self.getEc2Instance(ami, "elasticbamboo", ["elasticbamboo"], 't1.micro')
             dns_name = self._ec2.getDNSName(inst)
             self._ec2.waitUntilInstanceIsReady(inst)
-            self._ec2.waitForConnectionReady(inst, user, PK, dns_name)
-            r, e = self.executeCommands(user, inst.dns_name, PK, commands, config_name)
+            self._ec2.waitForConnectionReady(inst, user, self.pk, dns_name)
+            r, e = self.executeCommands(user, inst.dns_name, self.pk, commands, config_name)
             self.saveReport(r, config_name)
             errors += e
             if len(e) > 0:
@@ -192,7 +190,8 @@ class Run():
     
 def run(args):
     logging.info("starting %s" % APP)
-    r = Run(KEY, SECRET, APP, PK, REPORTS_DIR)
+    bellatrix = b
+    r = Run(getKey(), getSecret(), b.APP, getPrivateKey, b.REPORTS_DIR)
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
     exit_code = r.run(config)
     logging.info("%s has finished" % APP)
