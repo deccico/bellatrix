@@ -2,7 +2,10 @@
 
 import argparse
 import sys
+
 import bellatrix
+import bellatrix.bewitch_ami
+import bellatrix.burn_instance
 
 
 def bewitch(args):
@@ -11,15 +14,14 @@ def bewitch(args):
 
 def burn(args):
 	print "burning..."
-	sys.exit(bellatrix.burn_instance.run(args.instamce, args.image_name))
+	sys.exit(bellatrix.burn_instance.run(args.instance, args.image_name))
 
 
 def main():
 	# create the base parser with a subparsers argument
 	parser = argparse.ArgumentParser(prog=bellatrix.APP.lower(), \
-									description=bellatrix.description, \
-									#usage=usage, \
-									version= bellatrix.APP + " " + bellatrix.__version__)
+									description=bellatrix.description)
+	parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
 	subparsers = parser.add_subparsers()
 	
 	parser_bewitch = subparsers.add_parser('bewitch', help='Applies a configuration to a running instance')

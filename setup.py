@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys, re
-from distutils.core import setup, Extension
+from setuptools import setup
+
 from bellatrix import __version__
 
 if sys.version_info <= (2, 4):
@@ -21,20 +22,15 @@ setup(name='bellatrix',
       
       license='Apache License 2.0',
       
-      packages=['bellatrix'],
+      packages=['bellatrix', 'bellatrix.lib'],
 
       scripts=['bin/bellatrix',
-               'bin/bewitch_ami',
-               'bin/burn_instance',
-               'bin/set_permissions',
-               'bin/set_security',
-               'bin/start_instance', 
                ],
 
       platforms = "Posix; MacOS X; Windows",
       
       #http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-      install_requires = ['boto==2.1.1', 'argparse>=1.1'],
+      install_requires = ['boto==2.1.1', 'argparse'],
 
       #classifiers from http://pypi.python.org/pypi?:action=list_classifiers
       classifiers = [
