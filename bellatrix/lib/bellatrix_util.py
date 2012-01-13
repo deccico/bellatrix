@@ -31,12 +31,9 @@ def getPrivateKey(path=None):
 def checkPkFile(pk):
     if not os.path.isfile(pk): #todo add more validations (in a method)
         raise Exception("%s does not contain the private key file" % pk)
-    
-REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
-CONFIG_DIR = "./configs"  #todo get the path from the script
-OUT_TMP = "exec.tmp"
 
-
-if not os.path.isdir(reports):
-    os.makedirs(reports)
-    
+def getReportsDir():    
+    reportsDir = getCurDir() + os.path.sep + "reports" 
+    if not os.path.isdir(reports):
+        os.makedirs(reports)
+    return reportsDir

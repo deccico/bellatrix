@@ -58,6 +58,7 @@ class Run():
         self.ALL_CONFIGS = "all"
         self.ACCOUNT_LEN = 12
         self.CMD = "command"
+        self.CONFIG_DIR = "./configs"  #todo get the path from the script but maybe we will want to deprecate this option
     
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self._ec2.getImage(ami)  
@@ -151,7 +152,7 @@ class Run():
         for cfg in configs:
             logging.info("processing: " + cfg + " in: " + os.getcwd())
             if config == self.ALL_CONFIGS:
-                c = __import__(os.path.basename(CONFIG_DIR) + "." + cfg)
+                c = __import__(os.path.basename(self.CONFIG_DIR) + "." + cfg)
                 mod = "c." + cfg + "."
             else:
                 c = __import__(cfg)
@@ -191,7 +192,7 @@ class Run():
 def run(args):
     logging.info("starting %s" % APP)
     bellatrix = b
-    r = Run(getKey(), getSecret(), b.APP, getPrivateKey, b.REPORTS_DIR)
+    r = Run(getKey(), getSecret(), b.APP, getPrivateKey(), getReportsDir())
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
     exit_code = r.run(config)
     logging.info("%s has finished" % APP)
