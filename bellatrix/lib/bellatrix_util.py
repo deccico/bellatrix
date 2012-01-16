@@ -46,6 +46,6 @@ def checkPkFile(pk):
 
 def getReportsDir():    
     reportsDir = getCurDir() + os.path.sep + "reports" 
-    if not os.path.isdir(reports):
-        os.makedirs(reports)
+    if not os.path.isdir(reportsDir):
+        os.makedirs(reportsDir)
     return reportsDir
