@@ -21,14 +21,6 @@ logging.basicConfig(level=logging.INFO,
 from boto.ec2.connection import EC2Connection
 from ec2_lib import Ec2lib
 
-#this script needs "secret" and "key" files in the current path
-SECRET = open("secret").read().strip()
-KEY = open("key").read().strip()
-CONFIG_DIR = "./configs"  #todo get the path from the script
-OUT_TMP = "exec.tmp"
-CUR_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)))
-PK = CUR_DIR + os.path.sep + "ec2.pk"  #path to the private key to connect to agents
-REPORTS_DIR = CUR_DIR + os.path.sep + "reports"
 
 class Run():
     def __init__(self, key, sec, app_name, pk, instance, config_name): #todo move all the globals here
