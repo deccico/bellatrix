@@ -25,12 +25,6 @@ import bellatrix
 from bellatrix.lib.util import *
 from bellatrix.lib.bellatrix_util import *
 
-FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
-logging.basicConfig(level=logging.INFO,
-                    format=FORMAT,
-                    #filename='out',
-                    filemode='a'
-                    )
 
 from boto.ec2.connection import EC2Connection
 from ec2_lib import Ec2lib
@@ -190,11 +184,12 @@ class Run():
 
     
 def run(args):
-    logging.info("starting %s" % bellatrix.APP)
+    logging.info("starting %s" % os.path.basename(__file__))
+    logging.debug("starting %s" % __file__)
     r = Run(getKey(), getSecret(), bellatrix.APP, getPrivateKey(), getReportsDir())
     config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
     exit_code = r.run(config)
-    logging.info("%s has finished" % bellatrix.APP)
+    logging.info("%s has finished" % os.path.basename(__file__))
     return exit_code
 
 if __name__ == '__main__':

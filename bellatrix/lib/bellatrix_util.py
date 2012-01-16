@@ -3,19 +3,21 @@ Bellatrix utility functions
 '''
 
 import bellatrix
-from bellatrix.lib.util import *
+import bellatrix.lib.util
 
 import os
 import sys
 
 def getConfigDir():
-    return os.path.join(getHome(), "." + bellatrix.APP.lower())
+    return os.path.join(bellatrix.lib.util.getHome(), "." + bellatrix.APP.lower())
 
 def getConfigFile(path, file_name, description=None):
     if path == None:
         path = os.path.join(getConfigDir(), file_name) 
     if not os.path.isfile(path):
+        sys.tracebacklimit = 0 #we don't need the stack trace in this particular case.
         raise Exception(
+                          """\n\n -------------------------- \n """ 
                           """Error getting configuration file. \n """ 
                           """%s is looking for the file %s and can not find it.\n """
                           """Please generate it and try again. %s""" \
@@ -37,7 +39,7 @@ def getKey(path=None):
 def getPrivateKey(path=None):
     pk = getConfigFile(path, bellatrix.PRIVATE_KEY_FILE)
     if sys.platform != "cygwin": #for some reason ssh cygwin doesn't support the full path for the pk
-        pk = getCurDir() + os.path.sep + pk  
+        pk = bellatrix.lib.util.getCurDir() + os.path.sep + pk  
     return pk 
 
 def checkPkFile(pk):
@@ -45,7 +47,8 @@ def checkPkFile(pk):
         raise Exception("%s does not contain the private key file" % pk)
 
 def getReportsDir():    
-    reportsDir = getCurDir() + os.path.sep + "reports" 
+    reportsDir = bellatrix.lib.util.getCurDir() + os.path.sep + "reports" 
     if not os.path.isdir(reportsDir):
         os.makedirs(reportsDir)
     return reportsDir
+
