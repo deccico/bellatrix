@@ -26,13 +26,13 @@ def getConfigFile(path, file_name, description=None):
 
 def getSecret(path=None):
     return getConfigFile(path, bellatrix.SECRET_FILE, \
-                         """Secret Access Key is part of your AWS security credentials. """
+                         """Secret Access Key is part of your AWS security credentials.\n """
                          """Please sign into https://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key"""
                          """in order to get your keys.""")
 
 def getKey(path=None):
     return getConfigFile(path, bellatrix.KEY_FILE, \
-                         """The Access Key Id is part of your AWS security credentials. """
+                         """The Access Key Id is part of your AWS security credentials.\n """
                          """Please sign into https://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key"""
                          """in order to get your keys.""")
     
