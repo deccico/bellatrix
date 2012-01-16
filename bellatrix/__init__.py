@@ -11,5 +11,3 @@ KEY_FILE = "key"
 PRIVATE_KEY_FILE = "ec2.pk"
 
 OUT_TMP = "exec.tmp"
-
-FILE_NOT_FOUND = 1
