@@ -15,3 +15,8 @@ account_permissions
 .*~
 .*_list
 dist
+
+syntax: regexp
+^bellatrix\.egg-info$
+syntax: regexp
+^env$
