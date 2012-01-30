@@ -3,30 +3,23 @@
 Upload files to S3 
 '''
 
-import bellatrix
-from bellatrix.lib.util import *
+from ec2_lib import Ec2lib
 from bellatrix.lib.bellatrix_util import *
 
-from boto.ec2.connection import EC2Connection
-from ec2_lib import Ec2lib
 
 class Run():
     def __init__(self, key, sec):
         self._ec2 = Ec2lib(key, sec)
     
-    def uploadToS3(self, bucket, source):
-        self._ec2.uploadToS3(bucket, source, source, acl="public")
+    def uploadToS3(self, source, bucket, acl="public-read"):
+        self._ec2.uploadToS3(source, bucket, acl)
         
-         
-
     
-def run(configuration=None):
+def run(source, bucket, acl):
     r = Run(getKey(), getSecret())
-
-    exit_code = r.copy(config)
-    logging.info("%s has finished" % os.path.basename(__file__))
+    exit_code = r.uploadToS3(source, bucket, acl)
     return exit_code
 
 if __name__ == '__main__':
-    sys.exit(run(sys.argv))
+    sys.exit(run(sys.argv[1], sys.argv[2], sys.argv[3])) 
 

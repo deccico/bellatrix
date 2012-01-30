@@ -8,8 +8,10 @@ Created on Apr 7, 2011
 """
 
 import datetime
+import hashlib
 import logging
 import os
+import sys
 import time
 
 import boto
@@ -276,7 +278,7 @@ class Ec2lib:
     def getS3Connection(self):
         return boto.connect_s3(self._key, self._sec)
 
-    def percent_cb(complete, total):
+    def percent_cb(self, complete, total):
         sys.stdout.write('.')
         sys.stdout.flush()
 
@@ -285,12 +287,13 @@ class Ec2lib:
         k = Key(bucket)
         k.key = file_to_upload
         k.set_acl(acl)
-        k.set_contents_from_filename(file_to_upload, cb=percent_cb, num_cb=10)
+        k.set_contents_from_filename(file_to_upload, cb=self.percent_cb, num_cb=10)
         
-    def _copy(key_str, path, bucket, acl, pretend, force_copy=False):
+    def _copy(self, key_str, path, bucket, acl, pretend, force_copy=False):
         """Perform the actual copy operation.
     
-        This method is only called by L{copy_to_s3}
+        This method is only called by L{uploadToS3}
+        Function originally written by Gordon Tillman
     
         @param key_str: The string used to lookup the Key within the bucket
         @type key_str: string
@@ -305,7 +308,7 @@ class Ec2lib:
         @param force_copy: If True, do the copy even if we normally wouldn't
         @type force_copy: boolean
         """
-        _logger.debug("key_str='%s', path='%s', acl='%s', pretend=%s, "
+        logging.debug("key_str='%s', path='%s', acl='%s', pretend=%s, "
             "force_copy=%s", key_str, path, acl, pretend, force_copy)
         need_to_copy = True
         key = bucket.get_key(key_str)
@@ -313,7 +316,7 @@ class Ec2lib:
         is_dir = os.path.isdir(path)
         if key:
             if is_dir:
-                _logger.info("'%s' exists - no need to create.", path)
+                logging.info("'%s' exists - no need to create.", path)
                 need_to_copy = False
             elif key.size == stat[6]:
                 f = open(path)
@@ -321,7 +324,7 @@ class Ec2lib:
                 f.close()
                 m = hashlib.md5(fd)
                 if '"%s"' % m.hexdigest() == key.etag:
-                    _logger.info("'%s' - no need to copy.  size (%d) "
+                    logging.info("'%s' - no need to copy.  size (%d) "
                     "and md5 (%s) match",
                         path, key.size, key.etag)
                 need_to_copy = False
@@ -330,10 +333,10 @@ class Ec2lib:
             key.key = key_str
         if need_to_copy or force_copy:
             if pretend:
-                _logger.info("Would copy '%s' to '%s' with ACL '%s'",
+                logging.info("Would copy '%s' to '%s' with ACL '%s'",
                     path, key_str, acl)
             else:
-                _logger.info("Copying '%s' to '%s' with ACL '%s'",
+                logging.info("Copying '%s' to '%s' with ACL '%s'",
                     path, key_str, acl)
                 key.set_metadata('mode', str(stat[0]))
                 key.set_metadata('gid', str(stat[5]))
@@ -343,16 +346,17 @@ class Ec2lib:
                     key.set_contents_from_string("",
                         headers={'Content-Type': 'application/x-directory'})
                 else:
-                    key.set_contents_from_filename(path)
+                    key.set_contents_from_filename(path, b=self.percent_cb, num_cb=10)
                 key.set_acl(acl)
     
     
-    def uploadToS3(bucket, key_prefix, src, s3_conn=None,
+    def uploadToS3(self, src, bucket, key_prefix="", s3_conn=None,
         filter=None, acl=None, pretend=None, starting_with=None):
         """Copy the file specified by src (or contained in src if
         it is a directory) to the specified S3 bucket, pre-pending
         the optional key_prefix to the relative path of each
-        file withing src.
+        file within src.
+        Function originally written by Gordon Tillman
         @param bucket: The name of the bucket we are working with.  It must
             already exist.
         @type bucket: string
@@ -382,14 +386,14 @@ class Ec2lib:
         else:
             found_start = True
         if not s3_conn:
-            s3_conn = _s3_conn
+            s3_conn = self.getS3Connection()
         if not filter:
-            filter = _filter
+            filter = None
         if not acl:
-            acl = _acl
+            acl = "public-read"
         if pretend is None:
-            pretend = _pretend
-        _logger.debug("bucket=%s, key_prefix=%s, src=%s, filter=%s"
+            pretend = False
+        logging.debug("bucket=%s, key_prefix=%s, src=%s, filter=%s"
             ", acl=%s, pretend=%s", bucket, key_prefix, src,
             ",".join(filter), acl, pretend)
         b = s3_conn.get_bucket(bucket)
@@ -416,17 +420,17 @@ class Ec2lib:
                         else:
                             continue
                     try:
-                        _logger.debug("dir_key_str='%s', dir_path='%s', "
+                        logging.debug("dir_key_str='%s', dir_path='%s', "
                             "key_str='%s', path='%s'", dir_key_str, dir_path,
                             key_str, path)
                         if not dir_created:
-                            _copy(dir_key_str, dir_path, b, acl, pretend)
+                            self._copy(dir_key_str, dir_path, b, acl, pretend)
                             dir_created = True
-                        _copy(key_str, path, b, acl, pretend)
+                        self._copy(key_str, path, b, acl, pretend)
                     except boto.exception.S3ResponseError, e:
-                        _logger.warn("S3ResponseError '%s' while copying '%s'."
+                        logging.warn("S3ResponseError '%s' while copying '%s'."
                             "  Will retry 1 time",
                             str(e), path)
-                        _copy(key_str, path, b, acl, pretend, True)       
+                        self._copy(key_str, path, b, acl, pretend, True)       
             
             
