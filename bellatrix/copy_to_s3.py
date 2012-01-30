@@ -12,7 +12,12 @@ from ec2_lib import Ec2lib
 
 class Run():
     def __init__(self, key, sec):
-        pass 
+        self._ec2 = Ec2lib(key, sec)
+    
+    def uploadToS3(self, bucket, source):
+        self._ec2.uploadToS3(bucket, source, source, acl="public")
+        
+         
 
     
 def run(configuration=None):

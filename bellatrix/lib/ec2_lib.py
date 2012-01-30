@@ -7,11 +7,13 @@ Created on Apr 7, 2011
 @author: Adrian Deccico
 """
 
-import boto
 import datetime
 import logging
 import os
 import time
+
+import boto
+from boto.s3.key import Key
 
 NAME = __file__
 
@@ -271,5 +273,160 @@ class Ec2lib:
                 status = sg.revoke(r.ip_protocol, r.from_port, r.to_port, g)
                 logging.info("status: %s" % status)
 
+    def getS3Connection(self):
+        return boto.connect_s3(self._key, self._sec)
+
+    def percent_cb(complete, total):
+        sys.stdout.write('.')
+        sys.stdout.flush()
+
+    def uploadToBucket(self, bucket, file_to_upload, acl="public"):
+        bucket = bucket
+        k = Key(bucket)
+        k.key = file_to_upload
+        k.set_acl(acl)
+        k.set_contents_from_filename(file_to_upload, cb=percent_cb, num_cb=10)
         
-        
+    def _copy(key_str, path, bucket, acl, pretend, force_copy=False):
+        """Perform the actual copy operation.
+    
+        This method is only called by L{copy_to_s3}
+    
+        @param key_str: The string used to lookup the Key within the bucket
+        @type key_str: string
+        @param path: The path to the local file
+        @type path: string
+        @param bucket: The bucket we are currently working with
+        @type bucket: boto.s3.bucket.Bucket
+        @param acl: One of the supported ACL policies
+        @type acl: string
+        @param pretend: If True, we just log what we would do
+        @type pretend: boolean
+        @param force_copy: If True, do the copy even if we normally wouldn't
+        @type force_copy: boolean
+        """
+        _logger.debug("key_str='%s', path='%s', acl='%s', pretend=%s, "
+            "force_copy=%s", key_str, path, acl, pretend, force_copy)
+        need_to_copy = True
+        key = bucket.get_key(key_str)
+        stat = os.stat(path)
+        is_dir = os.path.isdir(path)
+        if key:
+            if is_dir:
+                _logger.info("'%s' exists - no need to create.", path)
+                need_to_copy = False
+            elif key.size == stat[6]:
+                f = open(path)
+                fd = f.read()
+                f.close()
+                m = hashlib.md5(fd)
+                if '"%s"' % m.hexdigest() == key.etag:
+                    _logger.info("'%s' - no need to copy.  size (%d) "
+                    "and md5 (%s) match",
+                        path, key.size, key.etag)
+                need_to_copy = False
+        else:
+            key = boto.s3.key.Key(bucket)
+            key.key = key_str
+        if need_to_copy or force_copy:
+            if pretend:
+                _logger.info("Would copy '%s' to '%s' with ACL '%s'",
+                    path, key_str, acl)
+            else:
+                _logger.info("Copying '%s' to '%s' with ACL '%s'",
+                    path, key_str, acl)
+                key.set_metadata('mode', str(stat[0]))
+                key.set_metadata('gid', str(stat[5]))
+                key.set_metadata('uid', str(stat[4]))
+                key.set_metadata('mtime', str(stat[8]))
+                if is_dir:
+                    key.set_contents_from_string("",
+                        headers={'Content-Type': 'application/x-directory'})
+                else:
+                    key.set_contents_from_filename(path)
+                key.set_acl(acl)
+    
+    
+    def uploadToS3(bucket, key_prefix, src, s3_conn=None,
+        filter=None, acl=None, pretend=None, starting_with=None):
+        """Copy the file specified by src (or contained in src if
+        it is a directory) to the specified S3 bucket, pre-pending
+        the optional key_prefix to the relative path of each
+        file withing src.
+        @param bucket: The name of the bucket we are working with.  It must
+            already exist.
+        @type bucket: string
+        @param key_prefix: This will be prepended to every source path that
+            we copy.  Can be empty.  Often is.
+        @type key_prefix: string
+        @param src: This is the source file or directory.
+        @type src: string
+        @param s3_conn: This is an active S3 connection.
+        @type s3_conn:  boto.s3.connection.S3Connection
+        @param filter: Only files with extensions listed in this filter
+            will be candidates for copying.  You can have an empty string
+            in this list to copy files with NO file extension.
+        @type filter: list of strings
+        @param acl: One of the supported ACL policies.
+        @type acl: string
+        @param pretend: If true, we just log what we would do, but we don't do it.
+        @type pretend: boolean
+        @param starting_with: An option source file path.  If specified, skips
+            all the files preceeding it until this file is reached.
+        @type starting_with: string
+        @raise boto.exception.S3ResponseError: If you specify
+            a non-existing bucket
+        """
+        if starting_with:
+            found_start = False
+        else:
+            found_start = True
+        if not s3_conn:
+            s3_conn = _s3_conn
+        if not filter:
+            filter = _filter
+        if not acl:
+            acl = _acl
+        if pretend is None:
+            pretend = _pretend
+        _logger.debug("bucket=%s, key_prefix=%s, src=%s, filter=%s"
+            ", acl=%s, pretend=%s", bucket, key_prefix, src,
+            ",".join(filter), acl, pretend)
+        b = s3_conn.get_bucket(bucket)
+        if os.path.isfile(src):
+            paths = [('.', [], [src])]
+        else:
+            paths = os.walk(src)
+        for dir in paths:
+            dir_key_str = os.path.normpath(
+                os.path.join(key_prefix, dir[0])).strip('/')
+            dir_path = dir[0]
+            if dir_key_str == ".":
+                dir_created = True
+            else:
+                dir_created = False
+            for file in dir[2]:
+                if os.path.splitext(file)[1] in filter:
+                    path = os.path.normpath(os.path.join(dir[0], file))
+                    key_str = os.path.normpath(os.path.join(key_prefix, dir[0],
+                        file)).strip('/')
+                    if not found_start:
+                        if path == starting_with:
+                            found_start = True
+                        else:
+                            continue
+                    try:
+                        _logger.debug("dir_key_str='%s', dir_path='%s', "
+                            "key_str='%s', path='%s'", dir_key_str, dir_path,
+                            key_str, path)
+                        if not dir_created:
+                            _copy(dir_key_str, dir_path, b, acl, pretend)
+                            dir_created = True
+                        _copy(key_str, path, b, acl, pretend)
+                    except boto.exception.S3ResponseError, e:
+                        _logger.warn("S3ResponseError '%s' while copying '%s'."
+                            "  Will retry 1 time",
+                            str(e), path)
+                        _copy(key_str, path, b, acl, pretend, True)       
+            
+            
