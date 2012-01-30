@@ -1,17 +1,6 @@
 #!/usr/bin/python
 '''
-Created on Aug 23, 2011
-
-Starting point for the project.
-
-ec2-upgraded is meant to automate the upgrade tasks to ec2 ami's.
-
-this script needs "secret" and "key" files (with the correct EC2 credentials) in the current path
-
-The idea is to:
-    -start an instance
-    -execute the correct upgrade steps  
-    -burn the instance and save the new ami
+This script runs an ec2 instance and then applies a configuration to it 
 '''
 
 import datetime
@@ -25,9 +14,7 @@ import bellatrix
 from bellatrix.lib.util import *
 from bellatrix.lib.bellatrix_util import *
 
-
-from boto.ec2.connection import EC2Connection
-from ec2_lib import Ec2lib
+from bellatrix.lib.ec2_lib import Ec2lib
 
 class Run():
     def __init__(self, key, sec, app_name, pk, reports): 

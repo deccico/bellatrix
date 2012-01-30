@@ -18,8 +18,7 @@ logging.basicConfig(level=logging.INFO,
                     filemode='a'
                     )
 
-from boto.ec2.connection import EC2Connection
-from ec2_lib import Ec2lib
+from bellatrix.lib.ec2_lib import Ec2lib
 
 
 class Run():
