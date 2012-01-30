@@ -141,8 +141,8 @@ class Run():
         if config == self.ALL_CONFIGS:
             configs = self.getConfigs()
         else:
-            configs = [config]
-        sys.path = [CUR_DIR] + sys.path
+            configs = [os.path.splitext(config)[0]]
+        sys.path = [bellatrix.lib.util.getCurDir()] + sys.path
         for cfg in configs:
             logging.info("processing: " + cfg + " in: " + os.getcwd())
             if config == self.ALL_CONFIGS:
@@ -183,11 +183,11 @@ class Run():
         self._ec2.setPermissionsToAmis(amis, permissions)
 
     
-def run(args):
+def run(configuration=None):
     logging.info("starting %s" % os.path.basename(__file__))
     logging.debug("starting %s" % __file__)
     r = Run(getKey(), getSecret(), bellatrix.APP, getPrivateKey(), getReportsDir())
-    config = r.ALL_CONFIGS if (len(args) < 2) else args[1]
+    config = r.ALL_CONFIGS if (not configuration) else configuration
     exit_code = r.run(config)
     logging.info("%s has finished" % os.path.basename(__file__))
     return exit_code
