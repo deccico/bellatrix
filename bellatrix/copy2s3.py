@@ -3,7 +3,7 @@
 Upload files to S3 
 '''
 
-from ec2_lib import Ec2lib
+from bellatrix.lib.ec2_lib import Ec2lib
 from bellatrix.lib.bellatrix_util import *
 
 

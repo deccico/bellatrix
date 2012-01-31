@@ -23,7 +23,7 @@ def getConfigFile(path, file_name, get_content, description=None):
                           """Please generate it and try again. %s""" \
                           % (bellatrix.APP, path, "" if description is None else description))
     if get_content:
-        return open(path).read()
+        return open(path).read().strip()
     else:
         return path
 

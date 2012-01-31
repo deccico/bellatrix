@@ -4,10 +4,6 @@ import argparse
 import logging
 import sys
 
-import bellatrix
-import bellatrix.bewitch_ami
-import bellatrix.burn_instance
-
 FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
 logging.basicConfig(level=logging.INFO,
                     format=FORMAT,
@@ -15,46 +11,53 @@ logging.basicConfig(level=logging.INFO,
                     filemode='a'
                     )
 
+import bellatrix
+import bellatrix.bewitch_ami
+import bellatrix.burn_instance
+import bellatrix.copy2s3
+
+
 def bewitch(args):
-	logging.info("bewitching...")
-	sys.exit(bellatrix.bewitch_ami.run(args.configuration))
+    logging.info("bewitching...")
+    sys.exit(bellatrix.bewitch_ami.run(args.configuration))
 
 def copy2s3(args):
     logging.info("uploading to S3...")
-    sys.exit(bellatrix.burn_instance.run(args.source, args.bucket, args.acl))
+    sys.exit(bellatrix.copy2s3.run(args.source, args.bucket, acl=args.acl))
 
 def burn(args):
-	logging.info("burning...")
-	sys.exit(bellatrix.burn_instance.run(args.instance, args.image_name))
+    logging.info("burning...")
+    sys.exit(bellatrix.burn_instance.run(args.instance, args.image_name))
 
 
 def main():
-	# create the base parser with a subparsers argument
-	parser = argparse.ArgumentParser(prog=bellatrix.APP.lower(), \
-									description=bellatrix.description)
-	parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
-	subparsers = parser.add_subparsers()
-	
-	parser_bewitch = subparsers.add_parser('bewitch', help='Applies a configuration to a running instance.')
-	parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
-	parser_bewitch.set_defaults(func=bewitch)
+    # create the base parser with a subparsers argument
+    parser = argparse.ArgumentParser(prog=bellatrix.APP.lower(), \
+                                    description=bellatrix.description)
+    parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
+    subparsers = parser.add_subparsers()
+    
+    parser_bewitch = subparsers.add_parser('bewitch', help='Applies a configuration to a running instance.')
+    parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
+    parser_bewitch.set_defaults(func=bewitch)
 
     parser_copy2s3 = subparsers.add_parser('copy2s3', help='Copy a file or directory to an S3 bucket.')
     parser_copy2s3.add_argument('source', help='Source file or directory.')
     parser_copy2s3.add_argument('bucket', help='S3 bucket destination. It must already exist.')
     #todo add default
-    parser_copy2s3.add_argument('acl', help='ACL policy for the new files in the S3 bucket.')
+    parser_copy2s3.add_argument('acl', help='ACL policy for the new files in the S3 bucket. If you don''t specify anything ACL will be public-read by default.', \
+    default='public-read', nargs='?', choices=['private', 'public-read', 'public-read-write', 'authenticated-read'])
     parser_copy2s3.set_defaults(func=copy2s3)
 
-#	parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
-#	parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4')
-#	parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the name.')
-#	parser_burn.set_defaults(func=burn)
+#    parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
+#    parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4')
+#    parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the name.')
+#    parser_burn.set_defaults(func=burn)
 
 
-	args = parser.parse_args()
-	args.func(args)
-	
+    args = parser.parse_args()
+    args.func(args)
+    
 
 if __name__ == "__main__":
-	main()
+    main()

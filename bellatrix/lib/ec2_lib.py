@@ -21,12 +21,10 @@ NAME = __file__
 
 class Ec2lib:
     def __init__(self, key, sec):
-        self.VERSION = "20110826"
         self._key = key
         self._sec = sec
         self.ec2 = self.getEC2Connection()
         self.cw = self.getCloudWatchConnection()
-        logging.info("%s - %s" % (NAME, self.VERSION))
         self._running_state = "running"
         self.ERR_CONNECTION_REFUSED = 65280 
 
@@ -35,6 +33,10 @@ class Ec2lib:
 
     def getEC2Connection(self):
         return boto.connect_ec2(self._key, self._sec)
+
+    def getS3Connection(self):
+        logging.debug("k:**%s** s:**%s**" % (self._key, self._sec))
+        return boto.connect_s3(self._key, self._sec)
 
     def getCPUMetric(self, instance_name):
         hours_span = self.hours
@@ -275,9 +277,6 @@ class Ec2lib:
                 status = sg.revoke(r.ip_protocol, r.from_port, r.to_port, g)
                 logging.info("status: %s" % status)
 
-    def getS3Connection(self):
-        return boto.connect_s3(self._key, self._sec)
-
     def percent_cb(self, complete, total):
         sys.stdout.write('.')
         sys.stdout.flush()
@@ -293,8 +292,9 @@ class Ec2lib:
         """Perform the actual copy operation.
     
         This method is only called by L{uploadToS3}
-        Function originally written by Gordon Tillman
-    
+
+        Function originally taken from here:  
+        http://www.gordontillman.info/computers/41-web-application-development/88-using-python-boto-library-with-s3
         @param key_str: The string used to lookup the Key within the bucket
         @type key_str: string
         @param path: The path to the local file
@@ -346,17 +346,18 @@ class Ec2lib:
                     key.set_contents_from_string("",
                         headers={'Content-Type': 'application/x-directory'})
                 else:
-                    key.set_contents_from_filename(path, b=self.percent_cb, num_cb=10)
+                    key.set_contents_from_filename(path, cb=self.percent_cb, num_cb=10)
                 key.set_acl(acl)
     
-    
-    def uploadToS3(self, src, bucket, key_prefix="", s3_conn=None,
-        filter=None, acl=None, pretend=None, starting_with=None):
+    def uploadToS3(self, src, bucket, acl=None, key_prefix="", s3_conn=None,
+        filter=None, pretend=None, starting_with=None):
         """Copy the file specified by src (or contained in src if
         it is a directory) to the specified S3 bucket, pre-pending
         the optional key_prefix to the relative path of each
         file within src.
-        Function originally written by Gordon Tillman
+
+        Function originally taken from here:  
+        http://www.gordontillman.info/computers/41-web-application-development/88-using-python-boto-library-with-s3
         @param bucket: The name of the bucket we are working with.  It must
             already exist.
         @type bucket: string
@@ -387,15 +388,16 @@ class Ec2lib:
             found_start = True
         if not s3_conn:
             s3_conn = self.getS3Connection()
+            logging.debug("s3_conn: " + str(s3_conn))
         if not filter:
-            filter = None
+            filter = ""
         if not acl:
             acl = "public-read"
         if pretend is None:
             pretend = False
-        logging.debug("bucket=%s, key_prefix=%s, src=%s, filter=%s"
-            ", acl=%s, pretend=%s", bucket, key_prefix, src,
-            ",".join(filter), acl, pretend)
+        logging.info("bucket=%s, key_prefix=%s, src=%s, filter=%s"
+            ", acl=%s, pretend=%s", bucket, key_prefix, src,",".join(filter), acl, pretend)
+        logging.debug("bucket list: " + str(s3_conn.get_all_buckets()))
         b = s3_conn.get_bucket(bucket)
         if os.path.isfile(src):
             paths = [('.', [], [src])]
@@ -410,7 +412,7 @@ class Ec2lib:
             else:
                 dir_created = False
             for file in dir[2]:
-                if os.path.splitext(file)[1] in filter:
+                if not filter or os.path.splitext(file)[1] in filter:
                     path = os.path.normpath(os.path.join(dir[0], file))
                     key_str = os.path.normpath(os.path.join(key_prefix, dir[0],
                         file)).strip('/')
@@ -431,6 +433,5 @@ class Ec2lib:
                         logging.warn("S3ResponseError '%s' while copying '%s'."
                             "  Will retry 1 time",
                             str(e), path)
-                        self._copy(key_str, path, b, acl, pretend, True)       
-            
+                        self._copy(key_str, path, b, acl, pretend, True)
             
