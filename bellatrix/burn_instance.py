@@ -1,83 +1,18 @@
 #!/usr/bin/python
 '''
-this needs a good refactor
+get a new ami given a running instance 
 '''
 
-import logging
-import os
-import re
-import pkgutil
 import datetime
-import sys
-
-APP="Bellatrix"
-FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
-logging.basicConfig(level=logging.INFO,
-                    format=FORMAT,
-                    #filename='out',
-                    filemode='a'
-                    )
+import logging
 
 from bellatrix.lib.ec2_lib import Ec2lib
+from bellatrix.lib.bellatrix_util import *
 
 
 class Run():
-    def __init__(self, key, sec, app_name, pk, instance, config_name): #todo move all the globals here
-        self._ec2 = Ec2lib(KEY, SECRET) 
-        self._app_name = app_name
-        self.CMD_OK = 0
-        self.define_constants()
-        self.burnInstance(instance, config_name)
-
-    def define_constants(self):
-        """define class constants to access ami configs"""
-        self.AMIS = "amis"
-        self.CMDS = "commands"
-        self.USER = "user"
-        self.BURN_OR_NOT = "burn_ami_at_the_end"
-        self.SKIP_ME = "skip_me"
-    
-    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
-        image = self._ec2.getImage(ami)  
-        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, APP, instance_initiated_shutdown_behavior="terminate")
-        return inst
-
-    def getConfigs(self):
-        """get configurations from 'configs' directory"""
-        import configs
-        cfgpath = os.path.dirname(configs.__file__)
-        dir = os.path.basename(cfgpath)
-        return [name for _, name, _ in pkgutil.iter_modules([cfgpath])]
-        
-    def executeCommands(self, user, dns, key, commands, config):
-        results = []
-        errors = []
-        for c in commands:
-            cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, c, OUT_TMP)
-            logging.info("executing: " + cmd)
-            res = os.system(cmd)
-            out = open(OUT_TMP).read()
-            cmd_res = [cmd, out, res, config]
-            results.append(cmd_res)
-            logging.info("result: " + str(res) + " output: " + out)
-            #increment errors if necessary
-            if res != 0:
-                errors.append(cmd_res)
-        logging.info("Commands executions: %s Errors: %s" % (len(commands), len(errors)))
-        return results, errors
-
-    def printErrors(self, errors):                
-        logging.warning("The following commands failed its execution:")
-        for e in errors:
-            logging.warning("config: %s cmd: %s exit code: %s" % (e[3], e[0], e[2])) 
-            logging.warning("last 500 chars output: %s" % e[1][-500:]) 
-            
-    def saveReport(self, results, config):                
-        logging.info("Saving report")
-        report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat()
-        with open(report_name, "w") as f:
-            for r in results:
-                f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
+    def __init__(self, key, sec): 
+        self._ec2 = Ec2lib(key, sec) 
 
     def burnInstance(self, instance, config_name):
         new_ami = self._ec2.createImage(instance, config_name + "-" 
@@ -87,11 +22,10 @@ class Run():
                      % (new_ami, config_name))
 
 def run(instance, config_name):
-    logging.info("starting %s" % APP)
-    r = Run(KEY, SECRET, APP, PK, instance, config_name)
-    logging.info("%s has finished" % APP)
+    r = Run(getKey(), getSecret(), instance, config_name)
+    r.burnInstance(instance, config_name)
     return 0
 
 if __name__ == '__main__':
-    sys.exit(run(sys.argv[1], sys.argv[2]))
+    sys.exit(run(*sys.argv[1:])) 
 

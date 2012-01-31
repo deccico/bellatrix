@@ -48,3 +48,13 @@ def getHome():
 
 def getCurDir():
     return os.path.abspath(os.getcwd())
+
+def getStringsFromFile(list_file):
+    """"Return list from file ignoring blanks and comments"""
+    l = []
+    with open(list_file) as f:
+         for line in f:
+             line=line.strip()
+             if len(line) > 0 and not line.startswith("#"):
+                 l.append(line)
+    return l
