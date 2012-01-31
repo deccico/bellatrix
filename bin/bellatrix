@@ -23,7 +23,7 @@ def bewitch(args):
 
 def copy2s3(args):
     logging.info("uploading to S3...")
-    sys.exit(bellatrix.copy2s3.run(args.source, args.bucket, acl=args.acl))
+    sys.exit(bellatrix.copy2s3.run(args.source, args.bucket, args.acl, args.key_prefix))
 
 def burn(args):
     logging.info("burning...")
@@ -44,7 +44,8 @@ def main():
     parser_copy2s3 = subparsers.add_parser('copy2s3', help='Copy a file or directory to an S3 bucket.')
     parser_copy2s3.add_argument('source', help='Source file or directory.')
     parser_copy2s3.add_argument('bucket', help='S3 bucket destination. It must already exist.')
-    #todo add default
+    parser_copy2s3.add_argument('key_prefix', help='This prefix will be added to the source path we copy. Blank by default.', \
+    default='', nargs='?')
     parser_copy2s3.add_argument('acl', help='ACL policy for the new files in the S3 bucket. If you don''t specify anything ACL will be public-read by default.', \
     default='public-read', nargs='?', choices=['private', 'public-read', 'public-read-write', 'authenticated-read'])
     parser_copy2s3.set_defaults(func=copy2s3)
