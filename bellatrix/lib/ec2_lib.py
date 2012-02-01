@@ -53,8 +53,9 @@ class Ec2lib:
 
     def getImage(self, ami):
         ami = self.ec2.get_image(ami)
-        if ami == None:
-            raise Exception("We couldn't retrieve ami information from the ami code:%s Either the ami doesn't exist or this account doesn't have permissions to access it. If the latest, you can use bellatrix set_permissions")
+        if not ami or isinstance(ami, str):
+            raise Exception("We couldn't retrieve ami information from the ami code:%s Either the ami doesn't exist or this account doesn't have permissions to access it. If the latest, you can use bellatrix set_permissions"
+                            % (ami, ami))
         return self.ec2.get_image(ami)
 
     def createImage(self, instance_id, name, description=None, no_reboot=False):
