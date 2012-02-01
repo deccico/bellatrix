@@ -17,7 +17,8 @@ import time
 import boto
 from boto.s3.key import Key
 
-NAME = __file__
+import bellatrix
+NAME = bellatrix.APP
 
 class Ec2lib:
     def __init__(self, key, sec):
@@ -27,6 +28,7 @@ class Ec2lib:
         self.cw = self.getCloudWatchConnection()
         self._running_state = "running"
         self.ERR_CONNECTION_REFUSED = 65280 
+        self.NAME = NAME
 
     def getCloudWatchConnection(self):
         return boto.connect_cloudwatch(self._key, self._sec)
@@ -50,6 +52,9 @@ class Ec2lib:
         return self.ec2.get_all_instances()
 
     def getImage(self, ami):
+        ami = self.ec2.get_image(ami)
+        if ami == None:
+            raise Exception("We couldn't retrieve ami information from the ami code:%s Either the ami doesn't exist or this account doesn't have permissions to access it. If the latest, you can use bellatrix set_permissions")
         return self.ec2.get_image(ami)
 
     def createImage(self, instance_id, name, description=None, no_reboot=False):
@@ -90,6 +95,17 @@ class Ec2lib:
         except:
             logging.error("Error getting information for image:%s " % ami)
         return ret
+
+    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
+        image = self.getImage(ami)  
+        inst = self.startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior="terminate")
+        return inst
+
+    def startInstance(self, ami, instance_type, key_name, security_groups):
+        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type)
+        dns_name = self.getDNSName(inst)
+        self.waitUntilInstanceIsReady(inst)
+        return inst, dns_name
 
     def startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
         """
@@ -436,14 +452,5 @@ class Ec2lib:
                         self._copy(key_str, path, b, acl, pretend, True)
 
 
-    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
-        image = self.getImage(ami)  
-        inst = self.startInstance(image, key_name, security_group, instance_type, self.app_name, instance_initiated_shutdown_behavior="terminate")
-        return inst
 
-    def startInstance(self, ami, instance_type, key_name, security_groups):
-        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type)
-        dns_name = self.getDNSName(inst)
-        self.waitUntilInstanceIsReady(inst)
-        return inst, dns_name
             
