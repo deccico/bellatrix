@@ -52,7 +52,7 @@ def main():
     parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
     subparsers = parser.add_subparsers()
     
-    parser_bewitch = subparsers.add_parser('bewitch', help='Applies a configuration to a running instance.')
+    parser_bewitch = subparsers.add_parser('bewitch_ami', help='Applies a configuration to a running instance.')
     parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
     parser_bewitch.set_defaults(func=bewitch)
 
