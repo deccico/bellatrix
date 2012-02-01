@@ -97,7 +97,7 @@ class Run():
         for ami in amis:
             config_name = ami[1]
             ami = ami[0]
-            inst, dns_name = Ec2lib.startInstance(ami, instance_type, key_name, security_groups)
+            inst, dns_name = self._ec2.startInstance(ami, instance_type, key_name, security_groups)
             self._ec2.waitForConnectionReady(inst, user, self.pk, dns_name)
             r, e = self.executeCommands(user, inst.dns_name, self.pk, commands, config_name)
             self.saveReport(r, config_name)

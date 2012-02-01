@@ -14,7 +14,7 @@ class Run():
         self._ec2 = Ec2lib(key, sec) 
 
     def startInstance(self, ami, type, key_name, security_groups):
-        Ec2lib.startInstance(ami, type, key_name, security_groups)
+        self._ec2.startInstance(ami, type, key_name, security_groups)
 
 def run(ami, type, key_name, security_groups):
     r = Run(bellatrix_util.getKey(), bellatrix_util.getSecret())
