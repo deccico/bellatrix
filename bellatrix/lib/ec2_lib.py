@@ -99,7 +99,7 @@ class Ec2lib:
 
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
         image = self.getImage(ami)  
-        inst = self.startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior="terminate")
+        inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior="terminate")
         return inst
 
     def startInstance(self, ami, instance_type, key_name, security_groups):
@@ -108,7 +108,7 @@ class Ec2lib:
         self.waitUntilInstanceIsReady(inst)
         return inst, dns_name
 
-    def startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
+    def _startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
         """
         starts an instance given an 'image' object
         
