@@ -437,13 +437,13 @@ class Ec2lib:
 
 
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
-        image = self._ec2.getImage(ami)  
-        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, self.app_name, instance_initiated_shutdown_behavior="terminate")
+        image = self.getImage(ami)  
+        inst = self.startInstance(image, key_name, security_group, instance_type, self.app_name, instance_initiated_shutdown_behavior="terminate")
         return inst
 
     def startInstance(self, ami, instance_type, key_name, security_groups):
         inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type)
-        dns_name = self._ec2.getDNSName(inst)
-        self._ec2.waitUntilInstanceIsReady(inst)
+        dns_name = self.getDNSName(inst)
+        self.waitUntilInstanceIsReady(inst)
         return inst, dns_name
             
