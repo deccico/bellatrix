@@ -40,12 +40,10 @@ class Run():
         self.ACCOUNT_LEN = 12
         self.CMD = "command"
         self.CONFIG_DIR = "./configs"  #todo get the path from the script but maybe we will want to deprecate this option
+        self.KEY_NAME = "key_name"
+        self.SECURITY_GROUPS = "security_groups"
+        self.INSTANCE_TYPE = "instance_type"
     
-    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
-        image = self._ec2.getImage(ami)  
-        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, self.app_name, instance_initiated_shutdown_behavior="terminate")
-        return inst
-
     def getConfigs(self):
         """get configurations from 'configs' directory"""
         #TODO: test this with the new splitted env
@@ -92,16 +90,14 @@ class Run():
             for r in results:
                 f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
 
-    def _processConfig(self, amis, commands, user, burn_at_the_end):
+    def _processConfig(self, amis, commands, user, burn_at_the_end, key_name, security_groups, instance_type):
         """execute a configuration, internal method of run"""
         amis_burned = []
-        errors = [] 
+        errors = []
         for ami in amis:
             config_name = ami[1]
             ami = ami[0]
-            inst = self.getEc2Instance(ami, "elasticbamboo", ["elasticbamboo"], 't1.micro')
-            dns_name = self._ec2.getDNSName(inst)
-            self._ec2.waitUntilInstanceIsReady(inst)
+            inst, dns_name = Ec2lib.startInstance(ami, instance_type, key_name, security_groups)
             self._ec2.waitForConnectionReady(inst, user, self.pk, dns_name)
             r, e = self.executeCommands(user, inst.dns_name, self.pk, commands, config_name)
             self.saveReport(r, config_name)
@@ -146,7 +142,8 @@ class Run():
             commands =  eval(mod + self.CMDS)
             user =  eval(mod + self.USER)
             burn_at_the_end = eval(mod + self.BURN_OR_NOT)
-            a,e = self._processConfig(amis, commands, user, burn_at_the_end)
+            a,e = self._processConfig(amis, commands, user, burn_at_the_end, eval(mod + self.KEY_NAME), 
+                                      eval(mod + self.SECURITY_GROUPS), eval(mod + self.INSTANCE_TYPE))
             amis_burned += a
             errors += e
         self.printErrors(errors)

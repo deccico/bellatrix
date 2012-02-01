@@ -434,4 +434,16 @@ class Ec2lib:
                             "  Will retry 1 time",
                             str(e), path)
                         self._copy(key_str, path, b, acl, pretend, True)
+
+
+    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
+        image = self._ec2.getImage(ami)  
+        inst = self._ec2.startInstance(image, key_name, security_group, instance_type, self.app_name, instance_initiated_shutdown_behavior="terminate")
+        return inst
+
+    def startInstance(self, ami, instance_type, key_name, security_groups):
+        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type)
+        dns_name = self._ec2.getDNSName(inst)
+        self._ec2.waitUntilInstanceIsReady(inst)
+        return inst, dns_name
             
