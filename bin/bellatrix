@@ -56,7 +56,7 @@ def main():
     parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
     parser_bewitch.set_defaults(func=bewitch)
 
-    parser_copy2s3 = subparsers.add_parser('copy2s3', help='Copy a file or directory to an S3 bucket.')
+    parser_copy2s3 = subparsers.add_parser('copy2s3', help='Copy a file or directory to a S3 bucket.')
     parser_copy2s3.add_argument('source', help='Source file or directory.')
     parser_copy2s3.add_argument('bucket', help='S3 bucket destination. It must already exist.')
     parser_copy2s3.add_argument('key_prefix', help='This prefix will be added to the source path we copy. Blank by default.', \
