@@ -29,6 +29,8 @@ class Ec2lib:
         self._running_state = "running"
         self.ERR_CONNECTION_REFUSED = 65280 
         self.NAME = NAME
+        self.DEFAULT_TIME_OUT = 300 #times
+        self.DEFAULT_STEP = 3 #seconds
 
     def getCloudWatchConnection(self):
         return boto.connect_cloudwatch(self._key, self._sec)
@@ -142,9 +144,20 @@ class Ec2lib:
     def stopInstance(self, i):
         i.stop()
     
-    def tagInstance(self, instance, key, value):
+    def tagInstance(self, instance, key, value, time_out=self.DEFAULT_TIME_OUT, step=self.DEFAULT_STEP):
         logging.info("tagging instance:%s key:%s value:%s" % (instance, key, value))
-        self.ec2.create_tags([instance], {key: value})
+        step = step
+        #todo: make the waiting structure a generic function
+        while (time_out > 0):
+            try:
+                time_out -= step
+                self.ec2.create_tags([instance], {key: value})
+                time.sleep(step)
+            except:
+                logging.info("tagging operation failed, but maybe the instance wasn't ready. We will keep trying %s more seconds" 
+                             % (TIME_OUT))
+            else:
+                break
     
     def terminateInstance(self, i):
         i.terminate()        
