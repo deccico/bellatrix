@@ -130,8 +130,12 @@ class Ec2lib:
                       instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior)
         logging.info("we got %d instance (should be only one)." % len(reservation.instances))
         i = reservation.instances[0]
-        i.update()
-        logging.info("instance %s is now: %s" % (i.id, i.state))
+        try:
+            i.update()
+        except:
+            logging.info("instance %s is now: %s" % (i.id, "starting"))
+        else:
+            logging.info("instance %s is now: %s" % (i.id, i.state))
         self.tagInstance(i.id, "Name",  owner_name + " started me")
         return i
 
