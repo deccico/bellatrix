@@ -52,7 +52,7 @@ def main():
     parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
     subparsers = parser.add_subparsers()
     
-    parser_bewitch = subparsers.add_parser('bewitch_ami', help='Applies a configuration to a running instance.')
+    parser_bewitch = subparsers.add_parser('bewitch_ami', help='Starts a new instance, applies a configuration to it and finally saves it into a new ami.')
     parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
     parser_bewitch.set_defaults(func=bewitch)
 
@@ -61,8 +61,8 @@ def main():
     parser_copy2s3.add_argument('bucket', help='S3 bucket destination. It must already exist.')
     parser_copy2s3.add_argument('key_prefix', help='This prefix will be added to the source path we copy. Blank by default.', \
     default='', nargs='?')
-    parser_copy2s3.add_argument('acl', help='ACL policy for the new files in the S3 bucket. If you don''t specify anything ACL will be public-read by default.', \
-    default='public-read', nargs='?', choices=['private', 'public-read', 'public-read-write', 'authenticated-read'])
+    parser_copy2s3.add_argument('acl', help='ACL policy for the new files in the S3 bucket. If you don''t specify anything ACL will be private by default.', \
+    default='private', nargs='?', choices=['private', 'public-read', 'public-read-write', 'authenticated-read'])
     parser_copy2s3.set_defaults(func=copy2s3)
 
     parser_burn = subparsers.add_parser('burn_instance', help='Burns a running instance into a new ami.')
@@ -70,7 +70,7 @@ def main():
     parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the image name.')
     parser_burn.set_defaults(func=burn)
 
-    parser_perm2ami = subparsers.add_parser('perm2ami', help='Enable other accounts to launch your ami.')
+    parser_perm2ami = subparsers.add_parser('perm2ami', help='Gives permissions to other accounts to launch your ami.')
     parser_perm2ami.add_argument('ami', help='AMI name. Something like ami-6ba27502')
     parser_perm2ami.add_argument('permissions_file', help='Text file with an account number (12 digits number without dashes) on each line.')
     parser_perm2ami.set_defaults(func=perm2ami)
