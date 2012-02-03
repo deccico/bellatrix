@@ -144,10 +144,11 @@ class Ec2lib:
     def stopInstance(self, i):
         i.stop()
     
-    def tagInstance(self, instance, key, value, time_out=self.DEFAULT_TIME_OUT, step=self.DEFAULT_STEP):
+    def tagInstance(self, instance, key, value, time_out=None, step=None):
         logging.info("tagging instance:%s key:%s value:%s" % (instance, key, value))
-        step = step
         #todo: make the waiting structure a generic function
+        time_out=time_out if time_out != None else self.DEFAULT_TIME_OUT
+        step = step if step != None else self.DEFAULT_STEP
         while (time_out > 0):
             try:
                 time_out -= step
