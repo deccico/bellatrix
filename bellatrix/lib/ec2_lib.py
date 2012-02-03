@@ -158,6 +158,7 @@ class Ec2lib:
                 logging.info("tagging operation failed, but maybe the instance wasn't ready. We will keep trying %s more seconds" 
                              % (time_out))
             else:
+                logging.info("instance:%s was successfully tagged with: key:%s value:%s" % (instance, key, value))
                 break
     
     def terminateInstance(self, i):
