@@ -156,7 +156,7 @@ class Ec2lib:
                 time.sleep(step)
             except:
                 logging.info("tagging operation failed, but maybe the instance wasn't ready. We will keep trying %s more seconds" 
-                             % (TIME_OUT))
+                             % (time_out))
             else:
                 break
     
