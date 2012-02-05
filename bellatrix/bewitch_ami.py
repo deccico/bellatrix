@@ -153,28 +153,11 @@ class Run():
             logging.info(str(a))
         return 0 if len(errors)==0 else 1
 
-    def getAccountPermissions(self, perm_file="account_permissions"):
-        """"Return list of accounts where new ami's will get execute permissions"""
-        l = []
-        with open(perm_file) as f:
-            for line in f:
-                line=line.strip()
-                if len(line)==self.ACCOUNT_LEN:
-                    l.append(line)
-        logging.info("accounts from %s: %s" % (perm_file,l))
-        return l
-    
-    def setPermissionsToAmis(self, amis, permissions):
-        self._ec2.setPermissionsToAmis(amis, permissions)
-
     
 def run(configuration=None):
-    logging.info("starting %s" % os.path.basename(__file__))
-    logging.debug("starting %s" % __file__)
     r = Run(getKey(), getSecret(), bellatrix.APP, getPrivateKey(), getReportsDir())
     config = r.ALL_CONFIGS if (not configuration) else configuration
     exit_code = r.run(config)
-    logging.info("%s has finished" % os.path.basename(__file__))
     return exit_code
 
 if __name__ == '__main__':
