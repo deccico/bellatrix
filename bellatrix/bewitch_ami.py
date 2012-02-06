@@ -55,13 +55,16 @@ class Run():
     def executeCommands(self, user, dns, key, commands, config):
         results = []
         errors = []
+        #use the key in the command only if we get one 
+        if None != key and '' != key:
+            key = ' -i ' + key
         context = {'key': key, 'user':user, 'dns':dns, 'out_tmp': bellatrix.OUT_TMP}
         for c in commands:
             if 'dict' in str(type(c)):
                 cmd = c[self.CMD] % context
             else:
-                #cmd = "ssh -o StrictHostKeyChecking=no -i %(key)s %(user)s@%(dns)s '%(command)s'  2>&1 > %(out_tmp)s" % \
-                cmd = "ssh -o StrictHostKeyChecking=no -i %(key)s %(user)s@%(dns)s '%(command)s' " % \
+                #todo: check if we can capture the stderr and stdout and seeing the output in real time. Maybe using tee?  
+                cmd = "ssh -o StrictHostKeyChecking=no %(key)s %(user)s@%(dns)s '%(command)s' " % \
                 dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
