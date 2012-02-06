@@ -11,8 +11,9 @@ from bellatrix.lib.bellatrix_util import *
 
 
 class Run():
-    def __init__(self, key, sec): 
+    def __init__(self, key, sec, app_name): 
         self._ec2 = Ec2lib(key, sec) 
+        self._app_name = app_name
 
     def burnInstance(self, instance, config_name):
         new_ami = self._ec2.createImage(instance, config_name + "-" 
@@ -22,7 +23,7 @@ class Run():
                      % (new_ami, config_name))
 
 def run(instance, config_name):
-    r = Run(getKey(), getSecret(), instance, config_name)
+    r = Run(getKey(), getSecret(), bellatrix.APP)
     r.burnInstance(instance, config_name)
     return 0
 
