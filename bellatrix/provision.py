@@ -20,51 +20,49 @@ class Provision():
                                                  bellatrix_util.getPrivateKey(), \
                                                  bellatrix_util.getReportsDir())
     
-    def provision(self, config):
-        exit_code = 0
-        return exit_code
-
-    def _processConfig(self, amis, commands, user, key_name):
+    def _processConfig(self, amis, commands, user, key_name, hostname):
         """execute a configuration, internal method of run"""
         errors = []
         for ami in amis:
             config_name = ami[1]
             ami = ami[0]
-            r, e = self.executeCommands(user, dns_name, pk, commands, config_name)
+            r, e = self.bewitch.executeCommands(user, hostname, key_name, commands, config_name)
             self.saveReport(r, config_name)
             errors += e
             if len(e) > 0:
                 logging.warning("There were errors while executing the commands. Not burning the instance...")
             return errors
 
-    def run(self, config):
+    def getVal(self, cfg, key, local_value):
+        if local_value != None:
+            return local_value
+        else:
+            return eval("cfg." + key)
+    
+    def provision(self, configuration, user, hostname, pk):
         """execute a configuration"""
-        amis_burned = []
         errors = []
-        configs = os.path.splitext(config)[0]
+        configs = os.path.splitext(configuration)[0]
         cfg = configs
         sys.path = [util.getCurDir()] + sys.path
         logging.info("processing: " + cfg + " in: " + os.getcwd())
         c = __import__(cfg)
-        mod = "c."
-        skip_me = eval(mod + self.SKIP_ME)
+        skip_me = self.getVal(c, self.SKIP_ME, None)
         if skip_me:
             logging.info("skipping execution of config: %s due to its configuration skip_me=true" % cfg)
         else:
-            amis = eval(mod + self.AMIS)
-            commands =  eval(mod + self.CMDS)
-            user =  eval(mod + self.USER)
-            a,e = self._processConfig(amis, commands, user, eval(mod + self.KEY_NAME), 
-                                      eval(mod + self.SECURITY_GROUPS), eval(mod + self.INSTANCE_TYPE))
-            amis_burned += a
-            errors += e
+            amis = self.getVal(c, self.bewitch.AMIS, None)
+            commands = self.getVal(c, self.bewitch.CMDS, None)
+            user =  self.getVal(c, self.bewitch.USER, user)
+            key_name = self.getVal(c, self.bewitch.KEY_NAME, pk)
+            errors = self._processConfig(amis, commands, user, key_name, hostname)
         self.printErrors(errors)
         return 0 if len(errors)==0 else 1
 
     
-def run(configuration):
+def run(configuration, user, hostname, pk):
     r = Provision(bellatrix_util.getKey(), bellatrix_util.getSecret())
-    exit_code = r.provision(configuration)
+    exit_code = r.provision(configuration, user, hostname, pk)
     return exit_code
 
 if __name__ == '__main__':
