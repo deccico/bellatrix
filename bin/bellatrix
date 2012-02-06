@@ -42,6 +42,7 @@ def setsecurity(args):
     
 def startinstance(args):
     logging.info("starting EC2 instance...")
+    logging.info("ami:%s type:%s key_name:%s security_groups:%s" % (args.ami, args.type, args.key_name, args.security_groups))
     sys.exit(bellatrix.start_instance.run(args.ami, args.type, args.key_name, args.security_groups))
 
 
@@ -82,13 +83,14 @@ def main():
     parser_perm2ami.set_defaults(func=setsecurity)
 
     parser_startinstance = subparsers.add_parser('start_instance', help='Starts a new EC2 instance.')
-    parser_startinstance.add_argument('--ami', help='AMI name. Something like ami-6ba27502')
+    parser_startinstance.add_argument('ami', help='AMI name. Something like ami-6ba27502')
+    parser_startinstance.add_argument('key_name', 
+    help='Name of the key-pair name that will be applied to your instance. The key pair is a group of two files, the public one in the instance and the private one in your computer that will help you connecting to your instance using: ssh -i private_key user@public_dns')
+    parser_startinstance.add_argument('--security_groups',help='comma separated list (with no spaces) of the security groups that will be applied to the new instance. It can be only one. By default it will be "default"',
+    default='default', nargs='?')
     parser_startinstance.add_argument('--type', help='instance type. m1.large by default. Please take a look at: http://aws.amazon.com/ec2/instance-types for more info.', 
     choices=['m1.small', 'm1.large', 'm1.xlarge', 't1.micro', 'm2.xlarge', 'm2.2xlarge', 'm2.4xlarge', 'c1.medium', 'c1.xlarge', 'cc1.4xlarge', 'cc2.8xlarge'], 
     default='m1.large', nargs='?')
-    parser_startinstance.add_argument('--key_name', 
-    help='Name of the key-pair name that will be applied to your instance. The key pair is a group of two files, the public one in the instance and the private one in your computer that will help you connecting to your instance using: ssh -i private_key user@public_dns')
-    parser_startinstance.add_argument('--security_groups',help='comma separated list (with no spaces) of the security groups that will be applied to the new instance. It can be only one. Usually is. e.g. mysecurity_group')
     parser_startinstance.set_defaults(func=startinstance)
 	
     args = parser.parse_args()

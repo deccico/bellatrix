@@ -54,11 +54,13 @@ class Ec2lib:
         return self.ec2.get_all_instances()
 
     def getImage(self, ami):
-        ami = self.ec2.get_image(ami)
-        if not ami or isinstance(ami, str):
-            raise Exception("We couldn't retrieve ami information from the ami code:%s Either the ami doesn't exist or this account doesn't have permissions to access it. If the latest, you can use bellatrix set_permissions"
-                            % (ami, ami))
-        return ami
+        ami_object = self.ec2.get_image(ami)
+        if not ami_object or isinstance(ami_object, str):
+            raise Exception("We couldn't retrieve ami information from the ami code: %s """ 
+                            """Either the ami doesn't exist or this account doesn't have permissions to access it. """ 
+                            """If the latest, you can use bellatrix set_permissions"""
+                            % (ami))
+        return ami_object
 
     def createImage(self, instance_id, name, description=None, no_reboot=False):
         """
@@ -94,13 +96,12 @@ class Ec2lib:
         try:
             ret = image = self.getImage(a)
             logging.info("image info: %s" + image)
-            
         except:
             logging.error("Error getting information for image:%s " % ami)
         return ret
 
     def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
-        image = self.getImage(ami)  
+        image = self.getImage(ami)
         inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior="terminate")
         return inst
 

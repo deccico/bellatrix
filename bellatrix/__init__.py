@@ -1,7 +1,7 @@
 #Constants
 
 APP = "Bellatrix"
-__version__ = '0.2.5'
+__version__ = '0.2.6'
 description = "AWS EC2 magic utilities"
 
 
