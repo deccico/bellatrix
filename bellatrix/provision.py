@@ -61,7 +61,7 @@ class Provision():
 
     
 def run(configuration, user, hostname, pk):
-    r = Provision(bellatrix_util.getKey(), bellatrix_util.getSecret())
+    r = Provision('', '')
     exit_code = r.provision(configuration, user, hostname, pk)
     return exit_code
 
