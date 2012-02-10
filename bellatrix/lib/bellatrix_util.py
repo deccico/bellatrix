@@ -60,3 +60,10 @@ def getReportsDir():
         os.makedirs(reportsDir)
     return reportsDir
 
+def getOutFile(original_file, suffix="_out", delete_file=True):
+    file = os.path.basename(original_file)
+    if delete_file:
+        os.remove(file)
+    return file + suffix
+    
+    

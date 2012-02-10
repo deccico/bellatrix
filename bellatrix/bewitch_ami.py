@@ -11,8 +11,8 @@ import re
 import sys
 
 import bellatrix
-from bellatrix.lib.util import *
-from bellatrix.lib.bellatrix_util import *
+from bellatrix.lib import util
+from bellatrix.lib import bellatrix_util
 
 from bellatrix.lib.ec2_lib import Ec2lib
 
@@ -28,6 +28,7 @@ class Run():
         self.CMD_OK = 0
         self.define_constants()
         self.reports = reports
+        self.out_file = bellatrix_util.getOutFile(__file__)
 
     def define_constants(self):
         """define class constants to access ami configs"""
@@ -102,6 +103,7 @@ class Run():
             config_name = ami[1]
             ami = ami[0]
             inst, dns_name = self._ec2.startInstance(ami, instance_type, key_name, security_groups)
+            instance_name = inst.id
             self._ec2.waitForConnectionReady(inst, user, self.pk, dns_name)
             r, e = self.executeCommands(user, inst.dns_name, self.pk, commands, config_name)
             self.saveReport(r, config_name)
