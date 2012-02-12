@@ -18,6 +18,7 @@ import bellatrix.copy2s3
 import bellatrix.set_permissions
 import bellatrix.set_security
 import bellatrix.start_instance
+import bellatrix.provision
 
 
 def bewitch(args):
@@ -45,6 +46,9 @@ def startinstance(args):
     logging.info("ami:%s type:%s key_name:%s security_groups:%s" % (args.ami, args.type, args.key_name, args.security_groups))
     sys.exit(bellatrix.start_instance.run(args.ami, args.type, args.key_name, args.security_groups))
 
+def provision(args):
+    logging.info("provisioning...")
+    sys.exit(bellatrix.provision.run(args.configuration, args.user, args.hostname, args.private_key))
 
 def main():
     # create the base parser with a subparsers argument
@@ -76,11 +80,11 @@ def main():
     parser_perm2ami.add_argument('permissions_file', help='Text file with an account number (12 digits number without dashes) on each line.')
     parser_perm2ami.set_defaults(func=perm2ami)
 
-    parser_perm2ami = subparsers.add_parser('set_security', help='Apply restrictions to a security group. EC2 instances run under a security group. They allow you to apply restrictions like open ports of ip ranges that can connect to the instances.')
-    parser_perm2ami.add_argument('security_group_name', help='Name of the security group.')
-    parser_perm2ami.add_argument('ports_file', help='Text file with a list of ports (one on each line) that will be opened. You can comment lines with # or have blank lines.')
-    parser_perm2ami.add_argument('ip_ranges_file', help='Text file with a list of ip ranges (one on each line) that will be allowed to connect to your EC2 instances.')
-    parser_perm2ami.set_defaults(func=setsecurity)
+    parser_set_security = subparsers.add_parser('set_security', help='Apply restrictions to a security group. EC2 instances run under a security group. They allow you to apply restrictions like open ports of ip ranges that can connect to the instances.')
+    parser_set_security.add_argument('security_group_name', help='Name of the security group.')
+    parser_set_security.add_argument('ports_file', help='Text file with a list of ports (one on each line) that will be opened. You can comment lines with # or have blank lines.')
+    parser_set_security.add_argument('ip_ranges_file', help='Text file with a list of ip ranges (one on each line) that will be allowed to connect to your EC2 instances.')
+    parser_set_security.set_defaults(func=setsecurity)
 
     parser_startinstance = subparsers.add_parser('start_instance', help='Starts a new EC2 instance.')
     parser_startinstance.add_argument('ami', help='AMI name. Something like ami-6ba27502')
@@ -92,7 +96,15 @@ def main():
     choices=['m1.small', 'm1.large', 'm1.xlarge', 't1.micro', 'm2.xlarge', 'm2.2xlarge', 'm2.4xlarge', 'c1.medium', 'c1.xlarge', 'cc1.4xlarge', 'cc2.8xlarge'], 
     default='m1.large', nargs='?')
     parser_startinstance.set_defaults(func=startinstance)
-	
+
+    parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running machine (EC2 or not).')
+    parser_provision.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
+    parser_provision.add_argument('user', help='User used to connect to the machine E.g. ubuntu')
+    parser_provision.add_argument('hostname', help='Hostname or simply the ip of the machine.')
+    parser_provision.add_argument('--private_key', help='In case we need to specify a private key to connect to the host. This is empty by default',
+    default='', nargs='?')
+    parser_provision.set_defaults(func=provision)
+
     args = parser.parse_args()
     args.func(args)
     
