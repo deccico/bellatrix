@@ -61,9 +61,9 @@ def getReportsDir():
     return reportsDir
 
 def getOutFile(original_file, suffix="_out", delete_file=True):
-    file = os.path.basename(original_file)
-    if delete_file:
+    file = os.getcwd() + os.path.sep + os.path.basename(original_file) + suffix
+    if delete_file and os.path.isfile(file):
         os.remove(file)
-    return file + suffix
+    return file
     
     

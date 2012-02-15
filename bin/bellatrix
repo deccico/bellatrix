@@ -97,13 +97,13 @@ def main():
     default='m1.large', nargs='?')
     parser_startinstance.set_defaults(func=startinstance)
 
-    parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running machine (EC2 or not).')
-    parser_provision.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
-    parser_provision.add_argument('user', help='User used to connect to the machine E.g. ubuntu')
-    parser_provision.add_argument('hostname', help='Hostname or simply the ip of the machine.')
-    parser_provision.add_argument('--private_key', help='In case we need to specify a private key to connect to the host. This is empty by default',
-    default='', nargs='?')
-    parser_provision.set_defaults(func=provision)
+    #parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running machine (EC2 or not).')
+    #parser_provision.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
+    #parser_provision.add_argument('user', help='User used to connect to the machine E.g. ubuntu')
+    #parser_provision.add_argument('hostname', help='Hostname or simply the ip of the machine.')
+    #parser_provision.add_argument('--private_key', help='In case we need to specify a private key to connect to the host. This is empty by default',
+    #default='', nargs='?')
+    #parser_provision.set_defaults(func=provision)
 
     args = parser.parse_args()
     args.func(args)

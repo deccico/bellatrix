@@ -18,7 +18,7 @@ from bellatrix.lib.ec2_lib import Ec2lib
 
 class Run():
     def __init__(self, key, sec, app_name, pk, reports): 
-        checkPkFile(pk)
+        bellatrix_util.checkPkFile(pk)
         self._ec2 = Ec2lib(key, sec) 
         #todo: take a look at: http://stackoverflow.com/questions/1389180/python-automatically-initialize-instance-variables
         self.key = key
@@ -119,6 +119,8 @@ class Run():
                         logging.info("ami: %s is being generated for configuration: %s" 
                                      % (new_ami, config_name))
                         amis_burned.append([new_ami, config_name])
+                        with open(self.out_file) as out:
+                            out.write(new_ami + "," + instance_name + os.linesep)
                     except:
                         logging.exception("Problem burning image: %s with instance: %s" % (config_name, inst.id))
             return amis_burned, errors
@@ -160,7 +162,8 @@ class Run():
 
     
 def run(configuration=None):
-    r = Run(getKey(), getSecret(), bellatrix.APP, getPrivateKey(), getReportsDir())
+    r = Run(bellatrix_util.getKey(), bellatrix_util.getSecret(), bellatrix.APP, 
+            bellatrix_util.getPrivateKey(), bellatrix_util.getReportsDir())
     config = r.ALL_CONFIGS if (not configuration) else configuration
     exit_code = r.run(config)
     return exit_code
