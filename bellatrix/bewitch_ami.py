@@ -66,7 +66,7 @@ class Run():
                 cmd = c[self.CMD] % context
             else:
                 #todo: check if we can capture the stderr and stdout and seeing the output in real time. Maybe using tee?  
-                cmd = "ssh -o StrictHostKeyChecking=no %(key)s %(user)s@%(dns)s '%(command)s' " % \
+                cmd = "ssh -o StrictHostKeyChecking=no %(key)s %(user)s@%(dns)s '%(command)s 2>&1' " % \
                 dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
