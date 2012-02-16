@@ -105,6 +105,14 @@ def main():
     #default='', nargs='?')
     #parser_provision.set_defaults(func=provision)
 
+    #parser_stop = subparsers.add_parser('stop', help='')
+    #parser_stop.add_argument('instance', help='')
+    #parser_stop.set_defaults(func=stop)
+
+    #parser_terminate = subparsers.add_parser('terminate', help='')
+    #parser_terminate.add_argument('instance', help='')
+    #parser_terminate.set_defaults(func=terminate)
+
     args = parser.parse_args()
     args.func(args)
     

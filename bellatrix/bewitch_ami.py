@@ -57,11 +57,12 @@ class Run():
         results = []
         errors = []
         #use the key in the command only if we get one 
-        if None != key and '' != key:
-            key = ' -i ' + key
         context = {'key': key, 'user':user, 'dns':dns, 'out_tmp': bellatrix.OUT_TMP}
+        if None != key and '' != key:
+            context['key'] = ' -i ' + key
         for c in commands:
             if 'dict' in str(type(c)):
+                context['key'] = key
                 cmd = c[self.CMD] % context
             else:
                 #todo: check if we can capture the stderr and stdout and seeing the output in real time. Maybe using tee?  

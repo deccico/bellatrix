@@ -1,10 +1,7 @@
 """
-EC2 utilities wrappin boto methods
+EC2 utilities wrapping boto methods
 
 boto reference in: http://boto.cloudhackers.com/ec2_tut.html
-
-Created on Apr 7, 2011
-@author: Adrian Deccico
 """
 
 import datetime
@@ -91,10 +88,10 @@ class Ec2lib:
         logging.info("burning instance: %s name: %s, description: %s" % (instance_id, name, description))
         return self.ec2.create_image(instance_id, name, description, no_reboot)
 
-    def getAmiInfo(ami):
+    def getAmiInfo(self, ami):
         ret = None
         try:
-            ret = image = self.getImage(a)
+            ret = image = self.getImage(ami)
             logging.info("image info: %s" + image)
         except:
             logging.error("Error getting information for image:%s " % ami)

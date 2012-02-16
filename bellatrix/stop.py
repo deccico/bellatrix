@@ -1,25 +1,27 @@
 #!/usr/bin/python
 '''
-Upload files to S3 
+stop or terminate instances
 '''
 
 from bellatrix.lib.ec2_lib import Ec2lib
-from bellatrix.lib.bellatrix_util import *
+from bellatrix.lib import bellatrix_util
 
 
-class Run():
+class Finisher():
     def __init__(self, key, sec):
         self._ec2 = Ec2lib(key, sec)
-    
-    def uploadToS3(self, source, bucket, acl="public-read", key_prefix=""):
-        self._ec2.uploadToS3(source, bucket, acl, key_prefix)
-        
-    
-def run(source, bucket, acl, key_prefix):
-    r = Run(getKey(), getSecret())
-    exit_code = r.uploadToS3(source, bucket, acl, key_prefix)
-    return exit_code
+        self.ALL_INSTANCES = "all"
 
-if __name__ == '__main__':
-    sys.exit(run(*sys.argv[1:])) 
+    def finish_instance(self, instance, finish_it):
+        for i in (self._ec2.getInstances() if self.ALL_INSTANCES == instance else [instance]):
+            finish_it(i)
+    
+def stop(instance):
+    f = Finisher(bellatrix_util.getKey(), bellatrix_util.getSecret())
+    f.finish_instance(instance, f._ec2.stop)
+    return 0
 
+def terminate(instance):
+    f = Finisher(bellatrix_util.getKey(), bellatrix_util.getSecret())
+    f.finish_instance(instance, f._ec2.terminate)
+    return 0
