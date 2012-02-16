@@ -58,3 +58,7 @@ def getStringsFromFile(list_file):
              if len(line) > 0 and not line.startswith("#"):
                  l.append(line)
     return l
+
+def writeFile(filename, content):
+    with open(filename, 'w') as out:
+        out.write(content)

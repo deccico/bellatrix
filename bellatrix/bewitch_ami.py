@@ -119,8 +119,7 @@ class Run():
                         logging.info("ami: %s is being generated for configuration: %s" 
                                      % (new_ami, config_name))
                         amis_burned.append([new_ami, config_name])
-                        with open(self.out_file) as out:
-                            out.write(new_ami + "," + instance_name + os.linesep)
+                        util.writeFile(self.out_file, new_ami + "," + instance_name + os.linesep)
                     except:
                         logging.exception("Problem burning image: %s with instance: %s" % (config_name, inst.id))
             return amis_burned, errors
