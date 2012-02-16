@@ -59,6 +59,6 @@ def getStringsFromFile(list_file):
                  l.append(line)
     return l
 
-def writeFile(filename, content):
-    with open(filename, 'w') as out:
+def writeFile(file_name, content):
+    with open(file_name, 'w') as out:
         out.write(content)

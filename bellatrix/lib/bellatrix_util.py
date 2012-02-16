@@ -61,6 +61,7 @@ def getReportsDir():
     return reportsDir
 
 def getOutFile(original_file, suffix="_out", delete_file=True):
+    #get the file name without extension
     file_name = os.path.splitext(os.path.basename(original_file))[0]
     file_name = os.getcwd() + os.path.sep + file_name + suffix
     if delete_file and os.path.isfile(file_name):
