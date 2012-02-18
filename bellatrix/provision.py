@@ -48,15 +48,11 @@ class Provision(bellatrix.bewitch_ami.Bewitch):
         logging.info("processing: " + cfg + " in: " + os.getcwd())
         module_name = os.path.basename(cfg) 
         c = util.importModule(cfg)
-        skip_me = self.getVal(c, module_name, self.SKIP_ME, None)
-        if skip_me:
-            logging.info("skipping execution of config: %s due to its configuration skip_me=true" % cfg)
-        else:
-            amis = self.getVal(c, module_name, self.AMIS, None)
-            commands = self.getVal(c, module_name, self.CMDS, None)
-            user =  self.getVal(c, module_name, self.USER, user)
-            key_name = self.getVal(c, module_name, self.KEY_NAME, pk)
-            errors = self._processConfig(amis, commands, user, key_name, hostname)
+        amis = self.getVal(c, module_name, self.AMIS, None)
+        commands = self.getVal(c, module_name, self.CMDS, None)
+        user =  self.getVal(c, module_name, self.USER, user)
+        key_name = self.getVal(c, module_name, self.KEY_NAME, pk)
+        errors = self._processConfig(amis, commands, user, key_name, hostname)
         self.printErrors(errors)
         return 0 if len(errors)==0 else 1
 
