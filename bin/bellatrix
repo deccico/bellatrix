@@ -92,9 +92,9 @@ def main():
     help='Name of the key-pair name that will be applied to your instance. The key pair is a group of two files, the public one in the instance and the private one in your computer that will help you connecting to your instance using: ssh -i private_key user@public_dns')
     parser_startinstance.add_argument('--security_groups',help='comma separated list (with no spaces) of the security groups that will be applied to the new instance. It can be only one. By default it will be "default"',
     default='default', nargs='?')
-    parser_startinstance.add_argument('--type', help='instance type. m1.large by default. Please take a look at: http://aws.amazon.com/ec2/instance-types for more info.', 
+    parser_startinstance.add_argument('--type', help='instance type. t1.micro by default. Please take a look at: http://aws.amazon.com/ec2/instance-types for more info.', 
     choices=['m1.small', 'm1.large', 'm1.xlarge', 't1.micro', 'm2.xlarge', 'm2.2xlarge', 'm2.4xlarge', 'c1.medium', 'c1.xlarge', 'cc1.4xlarge', 'cc2.8xlarge'], 
-    default='m1.large', nargs='?')
+    default='t1.micro', nargs='?')
     parser_startinstance.set_defaults(func=startinstance)
 
     parser_provision = subparsers.add_parser('provision', help='Applies a configuration to a running machine (EC2 or not).')

@@ -16,7 +16,7 @@ from bellatrix.lib import bellatrix_util
 
 from bellatrix.lib.ec2_lib import Ec2lib
 
-class Run():
+class Bewitch():
     def __init__(self, key, sec, app_name, pk, reports): 
         bellatrix_util.checkPkFile(pk)
         self._ec2 = Ec2lib(key, sec) 
@@ -133,7 +133,7 @@ class Run():
             configs = self.getConfigs()
         else:
             configs = [os.path.splitext(config)[0]]
-        sys.path = [bellatrix.lib.util.getCurDir()] + sys.path
+        sys.path = [util.getCurDir()] + sys.path
         for cfg in configs:
             logging.info("processing: " + cfg + " in: " + os.getcwd())
             if config == self.ALL_CONFIGS:
@@ -162,7 +162,7 @@ class Run():
 
     
 def run(configuration=None):
-    r = Run(bellatrix_util.getKey(), bellatrix_util.getSecret(), bellatrix.APP, 
+    r = Bewitch(bellatrix_util.getKey(), bellatrix_util.getSecret(), bellatrix.APP, 
             bellatrix_util.getPrivateKey(), bellatrix_util.getReportsDir())
     config = r.ALL_CONFIGS if (not configuration) else configuration
     exit_code = r.run(config)

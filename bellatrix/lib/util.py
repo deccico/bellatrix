@@ -3,8 +3,8 @@ general utility functions
 '''
 
 import os
+import sys
 import xml.dom.minidom
-
 
 
 def getNodeValue(dom, nodename):
@@ -53,12 +53,19 @@ def getStringsFromFile(list_file):
     """"Return list from file ignoring blanks and comments"""
     l = []
     with open(list_file) as f:
-         for line in f:
-             line=line.strip()
-             if len(line) > 0 and not line.startswith("#"):
-                 l.append(line)
+        for line in f:
+            line = line.strip()
+            if len(line) > 0 and not line.startswith("#"):
+                l.append(line)
     return l
 
 def writeFile(file_name, content):
     with open(file_name, 'w') as out:
         out.write(content)
+
+def importModule(module):
+    dir_name = os.path.dirname(os.path.abspath(module))
+    if len(dir_name) > 0 and os.path.sep in dir_name:
+        #we change a normal path to a python module
+        module = module.replace(os.path.sep, ".")
+    return __import__(os.path.basename(module))
