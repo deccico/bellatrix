@@ -108,18 +108,18 @@ class Ec2lib:
             logging.error("Error getting information for image:%s " % ami)
         return ret
 
-    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior=bellatrix.TERMINATE, blockDeviceMapping=None):
+    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior=bellatrix.TERMINATE, new_size=None):
         image = self.getImage(ami)
-        inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior, blockDeviceMapping)
+        inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior, new_size=new_size)
         return inst
 
-    def startInstance(self, ami, instance_type, key_name, security_groups, blockDeviceMapping=None):
-        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type, bellatrix.TERMINATE, blockDeviceMapping)
+    def startInstance(self, ami, instance_type, key_name, security_groups, new_size=None):
+        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type, bellatrix.TERMINATE, new_size)
         dns_name = self.getDNSName(inst)
         self.waitUntilInstanceIsReady(inst)
         return inst, dns_name
 
-    def _startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior=bellatrix.TERMINATE, blockDeviceMapping=None):
+    def _startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior=bellatrix.TERMINATE, new_size=None):
         """
         starts an instance given an 'image' object
         
@@ -133,13 +133,21 @@ class Ec2lib:
         :owner_name: string. Just the entity that initiated the instance. You will see the name in the 'tag name'. This library by default.
 
         """
-        logging.info("starting image: " + image.id)
+        logging.info("starting image: %s key %s type %s shutdown_behavior %s new size %s" 
+                     % (image.id, key_name, instance_type, instance_initiated_shutdown_behavior, new_size))
+        mapping = None
+        if new_size != None:
+            dev_sda1 = boto.ec2.blockdevicemapping.BlockDeviceType()
+            dev_sda1.size = new_size
+            bdm = boto.ec2.blockdevicemapping.BlockDeviceMapping()
+            bdm['/dev/sda1'] = dev_sda1            
+            mapping = bdm
         #img.run(key_name='cloudright', security_groups=['test1'], instance_type='m1.large')
         reservation = image.run(1, 1, 
                       key_name, security_group, 
                       instance_type=instance_type, 
                       instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior,
-                      block_device_map=blockDeviceMapping)
+                      block_device_map=mapping)
         logging.info("we got %d instance (should be only one)." % len(reservation.instances))
         i = reservation.instances[0]
         self.tagInstance(i.id, "Name",  owner_name + " started me")

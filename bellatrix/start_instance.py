@@ -15,14 +15,14 @@ class Run():
         self.out_file = bellatrix_util.getOutFile(__file__)
         
 
-    def startInstance(self, ami, instance_type, key_name, security_groups, blockDeviceMapping):
-        inst, dns_name = self._ec2.startInstance(ami, instance_type, key_name, security_groups, blockDeviceMapping)
+    def startInstance(self, ami, instance_type, key_name, security_groups, new_size):
+        inst, dns_name = self._ec2.startInstance(ami, instance_type, key_name, security_groups, new_size)
         util.writeFile(self.out_file, inst.id + "," + dns_name)
         
 
-def run(ami, instance_type, key_name, security_groups, blockDeviceMapping):
+def run(ami, instance_type, key_name, security_groups, new_size):
     r = Run(bellatrix_util.getKey(), bellatrix_util.getSecret())
-    r.startInstance(ami, instance_type, key_name, security_groups, blockDeviceMapping)
+    r.startInstance(ami, instance_type, key_name, security_groups, new_size)
     return 0
 
 
