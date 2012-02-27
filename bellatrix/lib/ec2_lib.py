@@ -49,7 +49,18 @@ class Ec2lib:
 
     def getReservations(self):
         return self.ec2.get_all_instances()
+    
+    def getInstance(self, instance):
+        """ Given a instance string, returns an instance object
+        """
+        for i in self.getInstances():
+            if i.id == instance:
+                return i
+        return None
 
+    def getAllInstances(self):
+        return self.getInstances()
+        
     def getImage(self, ami):
         ami_object = self.ec2.get_image(ami)
         if not ami_object or isinstance(ami_object, str):
@@ -156,22 +167,20 @@ class Ec2lib:
     def terminateInstance(self, i):
         i.terminate()        
 
-    def getInstances(self):
+    def getInstances(self, state=bellatrix.RUNNING):
         instances = []
         dict_inst = {}
+        logging.debug("getting all instances...")
         for img in self.getReservations():
             for r in img.instances:
-                if self.RUNNING == r.state_code:
-                    i = str(r).split(":")[1]
-                    #skip ami's and instances
-                    if r.image_id in self._exceptions or i in self._exceptions:
-                        logging.info("skipping %s as it is in the exception list" % str(r))
-                        continue
-                    instances.append([{"InstanceId":i}, r])
+                if state == r.state_code:
+                    instances.append(r)
+                    logging.debug("appending instance:%s" % r)
         return instances
 
 
     def destroyIdleInstances(self):
+        #TODO: this won't work due to refactor on getInstances...
         logging.info("Killing running instances consistently under the %s%s cpu threshold that" \
         " have run for at least %s hour/s" % (self.threshold, "%", self.hours))
         instances = self.getInstances()

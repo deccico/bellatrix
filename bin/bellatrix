@@ -19,6 +19,7 @@ import bellatrix.set_permissions
 import bellatrix.set_security
 import bellatrix.start_instance
 import bellatrix.provision
+import bellatrix.stop
 
 
 def bewitch(args):
@@ -50,6 +51,17 @@ def provision(args):
     logging.info("provisioning...")
     sys.exit(bellatrix.provision.run(args.configuration, args.user, args.hostname, args.private_key))
 
+def stop(args):
+    logging.info("stopping...")
+    sys.exit(bellatrix.stop.stop(args.instance))
+
+def terminate(args):
+    logging.info("terminating...")
+    sys.exit(bellatrix.stop.terminate(args.instance))
+
+
+#-------------------------------------------------------
+
 def main():
     # create the base parser with a subparsers argument
     parser = argparse.ArgumentParser(prog=bellatrix.APP.lower(), \
@@ -57,7 +69,7 @@ def main():
     parser.add_argument('--version', action='version', version=bellatrix.APP + " " + bellatrix.__version__)
     subparsers = parser.add_subparsers()
     
-    parser_bewitch = subparsers.add_parser('bewitch_ami', help='Starts a new instance, applies a configuration to it and finally save it into a new ami.')
+    parser_bewitch = subparsers.add_parser('bewitch', help='Starts a new instance, applies a configuration to it and finally save it into a new ami.')
     parser_bewitch.add_argument('configuration', help='Python configuration file. E.g. ubuntu.py')
     parser_bewitch.set_defaults(func=bewitch)
 
@@ -70,7 +82,7 @@ def main():
     default='private', nargs='?', choices=['private', 'public-read', 'public-read-write', 'authenticated-read'])
     parser_copy2s3.set_defaults(func=copy2s3)
 
-    parser_burn = subparsers.add_parser('burn_instance', help='Burns a running instance into a new ami.')
+    parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
     parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4 The instance should be running.')
     parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the image name.')
     parser_burn.set_defaults(func=burn)
@@ -86,7 +98,7 @@ def main():
     parser_set_security.add_argument('ip_ranges_file', help='Text file with a list of ip ranges (one on each line) that will be allowed to connect to your EC2 instances.')
     parser_set_security.set_defaults(func=setsecurity)
 
-    parser_startinstance = subparsers.add_parser('start_instance', help='Starts a new EC2 instance.')
+    parser_startinstance = subparsers.add_parser('start', help='Starts a new EC2 instance.')
     parser_startinstance.add_argument('ami', help='AMI name. Something like ami-6ba27502')
     parser_startinstance.add_argument('key_name', 
     help='Name of the key-pair name that will be applied to your instance. The key pair is a group of two files, the public one in the instance and the private one in your computer that will help you connecting to your instance using: ssh -i private_key user@public_dns')
@@ -105,13 +117,13 @@ def main():
     default='', nargs='?')
     parser_provision.set_defaults(func=provision)
 
-    #parser_stop = subparsers.add_parser('stop', help='')
-    #parser_stop.add_argument('instance', help='')
-    #parser_stop.set_defaults(func=stop)
+    parser_stop = subparsers.add_parser('stop', help='Stop a given instance or all of them if you pass the ALL argument. Stopping an instance will shut-down the instance but preserve data on the EBS volume. After stopping you will only be charged $0.10 per allocated GB per month (http://aws.amazon.com/ebs/).')
+    parser_stop.add_argument('instance', help='Instance id. Something like i-39e2075d. If you pass ALL then all instances will be stopped (unless they are explicitly protected)')
+    parser_stop.set_defaults(func=stop)
 
-    #parser_terminate = subparsers.add_parser('terminate', help='')
-    #parser_terminate.add_argument('instance', help='')
-    #parser_terminate.set_defaults(func=terminate)
+    parser_terminate = subparsers.add_parser('terminate', help='Terminates a given instance or all of them if you pass the ALL argument. Terminating an instance will shut it down and delete data on the EBS volume. Your instance/s won''t produce any cost after you terminate them.')
+    parser_terminate.add_argument('instance', help='Instance id. Something like i-39e2075d. If you pass ALL then all instances will be terminated (unless they are explicitly protected)')
+    parser_terminate.set_defaults(func=terminate)
 
     args = parser.parse_args()
     args.func(args)
