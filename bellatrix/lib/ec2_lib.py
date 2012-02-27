@@ -108,18 +108,18 @@ class Ec2lib:
             logging.error("Error getting information for image:%s " % ami)
         return ret
 
-    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior="terminate"):
+    def getEc2Instance(self, ami, key_name, security_group, instance_type, instance_initiated_shutdown_behavior=bellatrix.TERMINATE, blockDeviceMapping=None):
         image = self.getImage(ami)
-        inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior="terminate")
+        inst = self._startInstance(image, key_name, security_group, instance_type, self.NAME, instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior, blockDeviceMapping)
         return inst
 
-    def startInstance(self, ami, instance_type, key_name, security_groups):
-        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type)
+    def startInstance(self, ami, instance_type, key_name, security_groups, blockDeviceMapping=None):
+        inst = self.getEc2Instance(ami, key_name, security_groups.split(), instance_type, bellatrix.TERMINATE, blockDeviceMapping)
         dns_name = self.getDNSName(inst)
         self.waitUntilInstanceIsReady(inst)
         return inst, dns_name
 
-    def _startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior="terminate"):
+    def _startInstance(self, image, key_name, security_group, instance_type, owner_name=os.path.basename(__file__), instance_initiated_shutdown_behavior=bellatrix.TERMINATE, blockDeviceMapping=None):
         """
         starts an instance given an 'image' object
         
@@ -138,7 +138,8 @@ class Ec2lib:
         reservation = image.run(1, 1, 
                       key_name, security_group, 
                       instance_type=instance_type, 
-                      instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior)
+                      instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior,
+                      block_device_map=blockDeviceMapping)
         logging.info("we got %d instance (should be only one)." % len(reservation.instances))
         i = reservation.instances[0]
         self.tagInstance(i.id, "Name",  owner_name + " started me")

@@ -15,6 +15,7 @@ class Finisher():
         self.message = message
 
     def finish_instance(self, instance, finish_it):
+        instance = instance.lower()
         inst = []
         if self.ALL_INSTANCES == instance:
             inst = self._ec2.getInstances()

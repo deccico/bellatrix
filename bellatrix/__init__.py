@@ -1,9 +1,8 @@
 #Constants
 
 APP = "Bellatrix"
-__version__ = '0.3.7'
+__version__ = '0.4.0'
 description = "AWS EC2 magic utilities"
-
 
 SECRET_FILE = "secret"
 KEY_FILE = "key"
@@ -14,3 +13,5 @@ OUT_TMP = "exec.tmp"
 
 #running state for an ec2 instance
 RUNNING = 16   
+#shutdown behaviour
+TERMINATE = "terminate" 
