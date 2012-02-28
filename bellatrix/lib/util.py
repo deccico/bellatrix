@@ -2,8 +2,9 @@
 general utility functions
 '''
 
+import logging
 import os
-import sys
+import time
 import xml.dom.minidom
 
 
@@ -69,3 +70,20 @@ def importModule(module):
         #we change a normal path to a python module
         module = module.replace(os.path.sep, ".")
     return __import__(os.path.basename(module))
+
+
+def waitForSSHReady(user, key, dns, TIME_OUT=300):
+    ERR_CONNECTION_REFUSED = 65280 
+    logging.info("waiting until host: " + dns + " is ready to receive ssh connections. Time out is: " + str(TIME_OUT) + " seconds...")
+    tmp_file = "tmp"
+    cmd = "ssh -o StrictHostKeyChecking=no -i %s %s@%s '%s' > %s" % (key, user, dns, "echo CONNECTION READY", tmp_file)
+    step = 3
+    result = ERR_CONNECTION_REFUSED
+    while (result == ERR_CONNECTION_REFUSED and TIME_OUT > 0):
+        TIME_OUT -= step
+        time.sleep(step)
+        logging.info("executing:%s " % cmd )
+        result = os.system(cmd)
+    if result !=  0:
+        raise Exception("Sorry, but the instance never got ready for SSH connections")
+    logging.info("Host %s is ready to receive ssh connections." % (dns))

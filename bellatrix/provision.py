@@ -41,7 +41,6 @@ class Provision(bellatrix.bewitch_ami.Bewitch):
     
     def provision(self, configuration, user, hostname, pk):
         """execute a configuration"""
-        errors = []
         configs = os.path.splitext(configuration)[0]
         cfg = configs
         sys.path = [util.getCurDir()] + sys.path
@@ -52,6 +51,7 @@ class Provision(bellatrix.bewitch_ami.Bewitch):
         commands = self.getVal(c, module_name, self.CMDS, None)
         user =  self.getVal(c, module_name, self.USER, user)
         key_name = self.getVal(c, module_name, self.KEY_NAME, pk)
+        util.waitForSSHReady(user, key_name, hostname)
         errors = self._processConfig(amis, commands, user, key_name, hostname)
         self.printErrors(errors)
         return 0 if len(errors)==0 else 1

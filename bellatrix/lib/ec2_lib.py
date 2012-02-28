@@ -264,7 +264,7 @@ class Ec2lib:
             result = os.system(cmd)
         if result ==  self._running_state:
             raise Exception("Sorry, but the instance never got ready for SSH connections")
-        logging.info("Instance %s is ready for receiving ssh connections. %s" % (inst.id, open(tmp_file).read()))
+        logging.info("Instance %s is ready to receive ssh connections. %s" % (inst.id, open(tmp_file).read()))
 
     def setPermissionsToAmis(self, amis, account_permissions, retry=True):
         """set account permissions to a set of ami's"""
