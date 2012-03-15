@@ -33,7 +33,7 @@ setup(name='bellatrix',
 
       #classifiers from http://pypi.python.org/pypi?:action=list_classifiers
       classifiers = [
-                     'Development Status :: 4 - Beta',
+                     'Development Status :: 5 - Production/Stable',
                      'Environment :: Console',
                      'Intended Audience :: Developers',
                      'Intended Audience :: Information Technology',
