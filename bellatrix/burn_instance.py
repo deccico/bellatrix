@@ -5,6 +5,7 @@ get a new ami given a running instance
 
 import datetime
 import logging
+import sys
 
 import bellatrix
 from bellatrix.lib.ec2_lib import Ec2lib
