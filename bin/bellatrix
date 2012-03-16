@@ -32,7 +32,7 @@ def copy2s3(args):
 
 def burn(args):
     logging.info("burning...")
-    sys.exit(bellatrix.burn_instance.run(args.instance, args.image_name))
+    sys.exit(bellatrix.burn_instance.run(args.instance, args.image_name, args.wait))
 
 def perm2ami(args):
     logging.info("applying permissions to ami...")
@@ -85,6 +85,8 @@ def main():
     parser_burn = subparsers.add_parser('burn', help='Burns a running instance into a new ami.')
     parser_burn.add_argument('instance', help='Instance name. Something like: i-b63c98d4 The instance should be running.')
     parser_burn.add_argument('image_name', help='Image name. A time stamp will be added to the image name.')
+    parser_burn.add_argument('--wait', help='Wait until ami is ready to use.', \
+    default=False, nargs='?', type=bool)
     parser_burn.set_defaults(func=burn)
 
     parser_perm2ami = subparsers.add_parser('perm2ami', help='Gives permissions to other accounts to launch your ami.')
