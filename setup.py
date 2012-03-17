@@ -13,7 +13,7 @@ if sys.version_info <= (2, 4):
 setup(name='bellatrix',
       version=__version__,
       long_description=open('README.txt').read(),
-      description='Bellatrix is a comprehensive set of tools to automate the management of Amazon EC2 services.',
+      description='Bellatrix is a set of (magic) tools to automate the management of Amazon EC2 services.',
 
       keywords='ec2, ami, configuration, management, puppet, boto, aws, devops, sysadmin',
       author='Adrian Deccico',
