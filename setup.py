@@ -12,12 +12,12 @@ if sys.version_info <= (2, 4):
 
 setup(name='bellatrix',
       version=__version__,
-      long_description=open('README.txt').read(),
+      long_description=open('README.markdown').read(),
       description='Bellatrix is a comprehensive set of tools to automate the management of Amazon EC2 services.',
 
-      keywords='ec2, ami, configuration, management, puppet',
+      keywords='ec2, ami, configuration, management, puppet, boto, aws, devops, sysadmin',
       author='Adrian Deccico',
-      author_email='adeccico@atlassian.com',
+      author_email='deccico@gmail.com',
       url='https://bitbucket.org/adeccico/bellatrix',
       
       license='Apache License 2.0',
