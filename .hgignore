@@ -22,3 +22,5 @@ syntax: regexp
 ^env$
 syntax: regexp
 ^burn_instance_out$
+.settings/org.eclipse.core.resources.prefs
+start_instance_out
