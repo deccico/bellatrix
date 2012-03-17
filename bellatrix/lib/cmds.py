@@ -73,9 +73,7 @@ def apt_get_update():
 
 #from: http://wiki.nginx.org/Install#Ubuntu_PPA
 def install_nginx():
-    return ["sudo add-apt-repository ppa:nginx/stable -y"] \
-            + apt_get_update \
-            + apt_get_install("nginx")
+    return ["sudo add-apt-repository ppa:nginx/stable -y"] + apt_get_update() + apt_get_install("nginx")
                 
 def create_django_project(project_name, dir_name="." + os.path.sep):                
     return ["cd " + dir_name + " && rm -rf " + project_name + " && django-admin.py startproject " + project_name]
