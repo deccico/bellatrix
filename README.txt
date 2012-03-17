@@ -4,7 +4,7 @@ Bellatrix
 
 Bellatrix is a set of (magic) tools to automate the management of Amazon EC2 services.
 
-[Online documentation](http://readthedocs.org/docs/bellatrix/) 
+[Online documentation](http://bellatrix.readthedocs.org/) 
 
 Quick reference:
 
