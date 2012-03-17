@@ -404,29 +404,25 @@ class Ec2lib:
 
         Function originally taken from here:  
         http://www.gordontillman.info/computers/41-web-application-development/88-using-python-boto-library-with-s3
-        @param bucket: The name of the bucket we are working with.  It must
-            already exist.
+        @param bucket: The name of the bucket we are working with.  It must already exist.
         @type bucket: string
-        @param key_prefix: This will be prepended to every source path that
-            we copy.  Can be empty.  Often is.
+        @param key_prefix: This will be prepended to every source path that we copy.  Can be empty.  Often is.
         @type key_prefix: string
         @param src: This is the source file or directory.
         @type src: string
         @param s3_conn: This is an active S3 connection.
         @type s3_conn:  boto.s3.connection.S3Connection
-        @param filter: Only files with extensions listed in this filter
-            will be candidates for copying.  You can have an empty string
-            in this list to copy files with NO file extension.
+        @param filter: Only files with extensions listed in this filter will be candidates for copying.  
+        You can have an empty string in this list to copy files with NO file extension.
         @type filter: list of strings
         @param acl: One of the supported ACL policies.
         @type acl: string
         @param pretend: If true, we just log what we would do, but we don't do it.
         @type pretend: boolean
-        @param starting_with: An option source file path.  If specified, skips
-            all the files preceeding it until this file is reached.
+        @param starting_with: An option source file path.  If specified, skips all the files 
+        preceeding it until this file is reached.
         @type starting_with: string
-        @raise boto.exception.S3ResponseError: If you specify
-            a non-existing bucket
+        @raise boto.exception.S3ResponseError: If you specify a non-existing bucket
         """
         if starting_with:
             found_start = False

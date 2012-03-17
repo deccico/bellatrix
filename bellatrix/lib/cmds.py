@@ -3,21 +3,22 @@ Common utilities, meant to be used as build blocks.
 Please, keep every block independent from the others. 
 
 Every set of command needs to be stored into a list of strings.
-If any of the commands fails, the execution will be interrupted. It's convenient that you add a small test at the very end of each set. 
+If any of the commands fails, the execution will be interrupted. It's convenient that you add a small test 
+at the very end of each set. 
 
 For example:
 
-install_pip = [
-               "touch new_file",
-               "cat new_file",
-               ] 
+def install_pip():
+    return [
+            "touch new_file",
+            "cat new_file",
+            ] 
                
 It's a example of a single-purposed operation that performs a test at the end. 
 Should something happened to the operation, 'cat new_file' will fail. 
 Additionally you will be able to verify the content of the file.               
 """
 
-import logging
 import os
 
 #CONSTANTS
@@ -61,18 +62,20 @@ def installPackageInVirtualEnv(env, package, verify=True, verification_command=N
     cmd = flatCommands(cmds)
     return executeInVirtualEnv(env, cmd) 
 
-install_pip = apt_get_install("python-pip") 
-install_pip += pip_install("pip")    #we need to upgrade pip package using pip itself
+def install_pip():
+    #we need to upgrade pip package using pip itself
+    return apt_get_install("python-pip") + pip_install("pip")    
                
-
-apt_get_update = [
-                  apt_get_and_options + "update"
-                  ]
+def apt_get_update():
+    return [
+            apt_get_and_options + "update"
+            ]
 
 #from: http://wiki.nginx.org/Install#Ubuntu_PPA
-install_nginx = ["sudo add-apt-repository ppa:nginx/stable -y"] \
-                + apt_get_update \
-                + apt_get_install("nginx")
+def install_nginx():
+    return ["sudo add-apt-repository ppa:nginx/stable -y"] \
+            + apt_get_update \
+            + apt_get_install("nginx")
                 
 def create_django_project(project_name, dir_name="." + os.path.sep):                
     return ["cd " + dir_name + " && rm -rf " + project_name + " && django-admin.py startproject " + project_name]

@@ -20,3 +20,5 @@ syntax: regexp
 ^bellatrix\.egg-info$
 syntax: regexp
 ^env$
+syntax: regexp
+^burn_instance_out$
