@@ -53,7 +53,7 @@ will show a nice message explaining what file (and where) you need to provide.
 
 
 Starting an EC2 instance
-========================
+---------------------
 In order to start an instance, just type::
 	
 	bellatrix start ami key_name 
