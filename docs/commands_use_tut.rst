@@ -5,8 +5,10 @@ An Introduction to Bellatrix commands
 =======================================
 
 Bellatrix automates the interaction with EC2 Amazon Web Services. It uses the boto 
-library and others. Bellatrix wraps the underlying libraries in easy to use utilities 
+library and others. It will wrap the underlying libraries in easy to use utilities 
 that are both simple and consistent.
+
+.. contents::
 
 
 Installing Bellatrix
@@ -24,7 +26,7 @@ download the .tar.gz package and then::
 	
 
 Setting your AWS credentials
----------------------
+--------------------------------------------
 Bellatrix only needs three single files in order to help you access to your AWS EC2 
 resources. Not all the tools need all the files. If they are not present Bellatrix 
 will show a nice message explaining what file (and where) you need to provide.
@@ -53,7 +55,7 @@ will show a nice message explaining what file (and where) you need to provide.
 
 
 Starting an EC2 instance
----------------------
+-----------------------------------------------
 In order to start an instance, just type::
 	
 	bellatrix start ami key_name 
@@ -89,8 +91,8 @@ The complete usage, with optional parameters is::
 	* Instance type. The same AMI can be launched with different 'hardware' options.
 	* You can choose between:
 		* m1.small,m1.medium,m1.large,m1.xlarge,t1.micro,m2.xlarge,m2.2xlarge,m2.4xlarge,c1.medium,c1.xlarge,cc1.4xlarge,cc2.8xlarge
-		By default you will get t1.micro.
-	Please take a look at: http://aws.amazon.com/ec2/instance-types for more information.
+		* By default you will get t1.micro.
+	* Please take a look at: http://aws.amazon.com/ec2/instance-types for more information.
 	 
 * [optional] new_size [NEW_SIZE] (in giga bytes).
 	* An EBS AMI can be started with a larger size just by using this option. If you then save the instance into a new AMI then this will be the default value.
@@ -106,5 +108,85 @@ The complete usage, with optional parameters is::
 		sudo xfs_growfs /
 		
 		# In the case of Windows, you can use the graphical administration tools.                        
+
+
+Provision an EC2 instance or any host
+------------------------------------
+usage: bellatrix provision [-h] [--private_key [PRIVATE_KEY]]
+                           configuration user hostname
+
+positional arguments:
+  configuration         Python configuration file. E.g. ubuntu.py
+  user                  User used to connect to the machine E.g. ubuntu
+  hostname              Hostname or simply the ip of the machine.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --private_key [PRIVATE_KEY]
+                        In case we need to specify a private key to connect to
+                        the host. This is empty by default
+
+Saving the state of an instance into a new Amazon AMI
+------------------------------------------------------
+usage: bellatrix burn [-h] [--wait [WAIT]] instance image_name
+
+positional arguments:
+  instance       Instance name. Something like: i-b63c98d4 The instance should
+                 be running.
+  image_name     Image name. A time stamp will be added to the image name.
+
+
+Copying files to an S3 bucket
+------------------------------------------------------
+usage: bellatrix copy2s3 [-h]
+                         source bucket [key_prefix]
+                         [{private,public-read,public-read-write,authenticated-read}]
+
+positional arguments:
+  source                Source file or directory.
+  bucket                S3 bucket destination. It must already exist.
+  key_prefix            This prefix will be added to the source path we copy.
+                        Blank by default.
+  {private,public-read,public-read-write,authenticated-read}
+                        ACL policy for the new files in the S3 bucket. If you
+                        dont specify anything ACL will be private by default.
+
+
+Setting launch permissions to an AMI
+------------------------------------------------------
+usage: bellatrix perm2ami [-h] ami permissions_file
+
+positional arguments:
+  ami               AMI name. Something like ami-6ba27502
+  permissions_file  Text file with an account number (12 digits number without
+                    dashes) on each line.
+
+
+Stopping an EC2 instance
+------------------------------------------------------
+usage: bellatrix stop [-h] instance
+
+positional arguments:
+  instance    Instance id. Something like i-39e2075d. If you pass "all" then
+              all instances will be stopped (unless they are explicitly
+              protected)
+
+
+Terminating an EC2 instance
+------------------------------------------------------
+usage: bellatrix terminate [-h] instance
+
+positional arguments:
+  instance    Instance id. Something like i-39e2075d. If you pass ALL then all
+              instances will be terminated (unless they are explicitly
+              protected)
+
+
+Bewitching an AMI or how to start, provision and burn with a single command
+------------------------------------------------------
+usage: bellatrix bewitch [-h] configuration
+
+positional arguments:
+  configuration  Python configuration file. E.g. ubuntu.py
 
 
