@@ -66,6 +66,11 @@ The complete usage, with optional parameters is::
 
 	bellatrix start [--security_groups [SECURITY_GROUPS]] [--type [type]] [--new_size [NEW_SIZE]] ami key_name 
 
+Once this command has finished, it will generate an output file called 'start_instance_out' with the instance code and the dns name.
+The format will be similar to this line::
+	
+	i-6d6a1d09,ec2-50-17-116-43.compute-1.amazonaws.com  
+
 -------------------
 
 **Parameters list**
@@ -131,21 +136,26 @@ Usage example::
 **Parameters list**
 
 * configuration - Python configuration file. E.g. **ubuntu.py** This is how a configuration command looks like::
-	#list of ami's to process with the below cmds
-	amis = [
-	       ["ami-fd589594",  "ubuntu1104-ff36-mysql51-x64"],
-	       ]
-	
-	#set of commands from Bellatrix
-	#The source file can be found here: https://bitbucket.org/adeccico/bellatrix/src/8a4b2d149a48/bellatrix/lib/cmds.py
-	from bellatrix.lib import cmds
 
+	"""
+	Simple example of a configuration file for the provisioning command.
+	"""
+	
+	#commands library from Bellatrix
+	#The source file can be found here:     https://bitbucket.org/adeccico/bellatrix/src/tip/bellatrix/lib/cmds.py
+	# and the documentation here: http://bellatrix.readthedocs.org/en/latest/source/ref/bellatrix.lib.html#module-bellatrix.lib.cmds
+	from bellatrix.lib import cmds
+	commands = cmds.apt_get_update()
+	commands = cmds.install_pip()
+	commands += cmds.pip_install("virtualenv")
+	commands += ['echo "Adding my own command :)" > test', 'cat test']
+	
+The previous example can be found here: https://bitbucket.org/deccico/bellatrix_configs/src/tip/bellatrix_configs/simple_provision_test.py 
+Another, more complex example of a configuration file can be found here: https://bitbucket.org/deccico/bellatrix_configs/src/tip/bellatrix_configs/ubuntu_django_nginx_gunicorn.py
 
 * user - User used to connect to the machine E.g. **ubuntu**
 * hostname - Hostname or simply the ip of the machine.
-* [optional] --private_key PRIVATE_KEY - In case we need to specify a private key to connect to the host. This is empty by default.
-	* In the case of a EC2 instance we will typically use the default ec2.pk file located in ~/.bellatrix/ec2.pk
-
+* [optional] --private_key PRIVATE_KEY - In case we need to specify a private key to connect to the host. This is empty by default. If you are using an EC2 instance you will typically use the default private key located in ~/.bellatrix/ec2.pk
 
 
 
