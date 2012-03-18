@@ -91,9 +91,13 @@ class Bewitch():
     def saveReport(self, results, config):                
         logging.info("Saving report")
         report_name = self.reports + os.path.sep + config + "-" + datetime.datetime.now().isoformat() + ".txt"
+        report_name_dir = os.path.dirname(report_name)
+        if not os.path.isdir(report_name_dir):
+            os.makedirs(report_name_dir)
         with open(report_name, "w") as f:
             for r in results:
-                f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1])) 
+                f.write("res: %s cmd: %s out: %s \n" % (r[2], r[0], r[1]))
+        logging.info("Report saved in: %s" % report_name) 
 
     def _processConfig(self, amis, commands, user, burn_at_the_end, key_name, security_groups, instance_type):
         """execute a configuration, internal method of run"""

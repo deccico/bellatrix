@@ -33,7 +33,7 @@ class Provision(bellatrix.bewitch_ami.Bewitch):
         if local_value != None:
             return local_value
         else:
-            key = "cfg." + module_name + "." + key if not key in cfg else "cfg." + key
+            key = "cfg." + module_name + "." + key if not hasattr(cfg,key) else "cfg." + key
             try: 
                 return eval(key)
             except:
