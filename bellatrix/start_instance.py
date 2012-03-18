@@ -16,6 +16,7 @@ class Run():
         
 
     def startInstance(self, ami, instance_type, key_name, security_groups, new_size):
+        #todo: use the whole set of attributes and default options
         inst, dns_name = self._ec2.startInstance(ami, instance_type, key_name, security_groups, new_size)
         util.writeFile(self.out_file, inst.id + "," + dns_name)
         

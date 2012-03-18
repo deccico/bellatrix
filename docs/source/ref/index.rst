@@ -1,4 +1,7 @@
-bellatrix
+.. _ref-index:
+
+=========
+API Reference
 =========
 
 .. toctree::

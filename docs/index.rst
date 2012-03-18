@@ -4,7 +4,7 @@
 bellatrix: a set of (magic) AWS EC2 utilities
 =============================================
 
-Bellatrix is a set of (magic) tools to automate the management of `Amazon Web Services`_.
+Bellatrix is a set of (magic) command line tools to automate the management of `Amazon Web Services`_.
 
 .. _Amazon Web Services: http://aws.amazon.com/ 
   
@@ -25,6 +25,7 @@ For more information just execute *bellatrix -h* or *bellatrix command -h*
 .. toctree::
    :maxdepth: 2
 
+   commands_use_tut
 
 
 Indices and tables
@@ -32,5 +33,6 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
+* :ref:`ref-index`
 * :ref:`search`
 
