@@ -1,7 +1,7 @@
 .. _commands_use_tut:
 
 =======================================
-An Introduction to Bellatrix commands
+Introduction to Bellatrix commands
 =======================================
 
 Bellatrix automates the interaction with EC2 Amazon Web Services. It uses the boto 
@@ -43,8 +43,9 @@ will show a nice message explaining what file (and where) you need to provide.
 
 		The file should contain your 'secret access key' (a string with an approximate length of 50 characters). 
 		It is part of your AWS security credentials.
-		Please sign into: \nhttps://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key
-		in order to get your secret file.
+		In order to get your secret file please sign into: 
+		https://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key
+		.
 
 * Private key
 	* Location <your_home>/.bellatrix/**ec2.pk**::
@@ -63,7 +64,7 @@ In order to start an instance, just type::
 
 The complete usage, with optional parameters is::
 
-	bellatrix start ami key_name [--security_groups [SECURITY_GROUPS]] [--type [type]] [--new_size [NEW_SIZE]]
+	bellatrix start [--security_groups [SECURITY_GROUPS]] [--type [type]] [--new_size [NEW_SIZE]] ami key_name 
 
 -------------------
 
@@ -84,18 +85,18 @@ The complete usage, with optional parameters is::
 	* In order to generate your 'key name', please refer to: http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/generating-a-keypair.html
 	* If you are starting a Windows AMI then you would normally use RDP instead of this ssh key. 
 	
-* [optional] security_groups [SECURITY_GROUPS]
+* [optional] --security_groups [SECURITY_GROUPS]
 	* Comma separated list (with no spaces) of the security groups that will be applied to the new instance. 
 	* It can be only one. By default it will be "default"
 	
-* [optional] type.
+* [optional] --type type.
 	* Instance type. The same AMI can be launched with different 'hardware' options.
 	* You can choose between:
 		* m1.small,m1.medium,m1.large,m1.xlarge,t1.micro,m2.xlarge,m2.2xlarge,m2.4xlarge,c1.medium,c1.xlarge,cc1.4xlarge,cc2.8xlarge
 		* By default you will get t1.micro.
 	* Please take a look at: http://aws.amazon.com/ec2/instance-types for more information.
 	 
-* [optional] new_size [NEW_SIZE] (in giga bytes).
+* [optional] --new_size NEW_SIZE (in giga bytes).
 	* An EBS AMI can be started with a larger size just by using this option. If you then save the instance into a new AMI then this will be the default value.
 	* If the file system is ext4, then you are done. If not, you will need to execute one of this commands:: 
 
@@ -113,17 +114,40 @@ The complete usage, with optional parameters is::
 
 Provision an EC2 instance or any host
 -----------------------------------------------------
-usage: bellatrix provision [-h] [--private_key [PRIVATE_KEY]]
-                           configuration user hostname
+Provision an instance means you will execute a set of commands on it. Typically in order to apply some configuration. 
+Your set of commands can be anything you want, even the execution of a Puppet script ;) 
+Bellatrix provides a large set of ready to use commands but you can extend it with your own commands. As a suggestion
+if you are adding a new command, you may want to make it idempotent, which means executing they should have the same 
+effect even if you execute them multiple times, for example using 'mkdir -p dir' instead of 'mkdir dir'.
+ 
+The **provision** subcommand can be used with any host, EC2 instances or not. Windows machines with an SSH server can be used too.
+ 
+Usage example:: 
 
-positional arguments:
-  configuration         Python configuration file. E.g. ubuntu.py
-  user                  User used to connect to the machine E.g. ubuntu
-  hostname              Hostname or simply the ip of the machine.
+	bellatrix provision [--private_key [PRIVATE_KEY]] configuration user hostname
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --private_key [PRIVATE_KEY] In case we need to specify a private key to connect to the host. This is empty by default
+-------------------
+
+**Parameters list**
+
+* configuration - Python configuration file. E.g. **ubuntu.py** This is how a configuration command looks like::
+	#list of ami's to process with the below cmds
+	amis = [
+	       ["ami-fd589594",  "ubuntu1104-ff36-mysql51-x64"],
+	       ]
+	
+	#set of commands from Bellatrix
+	#The source file can be found here: https://bitbucket.org/adeccico/bellatrix/src/8a4b2d149a48/bellatrix/lib/cmds.py
+	from bellatrix.lib import cmds
+
+
+* user - User used to connect to the machine E.g. **ubuntu**
+* hostname - Hostname or simply the ip of the machine.
+* [optional] --private_key PRIVATE_KEY - In case we need to specify a private key to connect to the host. This is empty by default.
+	* In the case of a EC2 instance we will typically use the default ec2.pk file located in ~/.bellatrix/ec2.pk
+
+
+
 
 Saving the state of an instance into a new Amazon AMI
 ------------------------------------------------------

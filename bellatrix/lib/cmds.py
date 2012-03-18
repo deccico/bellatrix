@@ -1,10 +1,10 @@
 """ 
-Common utilities, meant to be used as build blocks.
-Please, keep every block independent from the others. 
+Common utilities, meant to be used as 'building blocks'.
+Every block has a different utility, being possible in some cases to composite them. 
 
-Every set of command needs to be stored into a list of strings.
-If any of the commands fails, the execution will be interrupted. It's convenient that you add a small test 
-at the very end of each set. 
+Every command is a simple function that returns the commands to be executed into a list of strings.
+If any of the commands fails, the execution will be interrupted. 
+It's convenient that you add a small test at the very end of each set. 
 
 For example:
 
@@ -14,9 +14,9 @@ def install_pip():
             "cat new_file",
             ] 
                
-It's a example of a single-purposed operation that performs a test at the end. 
+It's an example of a single-purposed operation that performs a test at the end. 
 Should something happened to the operation, 'cat new_file' will fail. 
-Additionally you will be able to verify the content of the file.               
+Additionally you will be able to verify the content of the file in the logging output.               
 """
 
 import os
