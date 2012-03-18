@@ -41,7 +41,8 @@ will show a nice message explaining what file (and where) you need to provide.
 * Secret file
 	* Location <your_home>/.bellatrix/**secret**::
 
-		The file should contain your 'secret access key' (a string with an approximate length of 50 characters) and is part of your AWS security credentials.
+		The file should contain your 'secret access key' (a string with an approximate length of 50 characters). 
+		It is part of your AWS security credentials.
 		Please sign into: \nhttps://aws-portal.amazon.com/gp/aws/developer/account/index.html?action=access-key
 		in order to get your secret file.
 
@@ -111,7 +112,7 @@ The complete usage, with optional parameters is::
 
 
 Provision an EC2 instance or any host
-------------------------------------
+-----------------------------------------------------
 usage: bellatrix provision [-h] [--private_key [PRIVATE_KEY]]
                            configuration user hostname
 
@@ -122,17 +123,14 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --private_key [PRIVATE_KEY]
-                        In case we need to specify a private key to connect to
-                        the host. This is empty by default
+  --private_key [PRIVATE_KEY] In case we need to specify a private key to connect to the host. This is empty by default
 
 Saving the state of an instance into a new Amazon AMI
 ------------------------------------------------------
 usage: bellatrix burn [-h] [--wait [WAIT]] instance image_name
 
 positional arguments:
-  instance       Instance name. Something like: i-b63c98d4 The instance should
-                 be running.
+  instance       Instance name. Something like: i-b63c98d4 The instance should be running.
   image_name     Image name. A time stamp will be added to the image name.
 
 
@@ -145,11 +143,8 @@ usage: bellatrix copy2s3 [-h]
 positional arguments:
   source                Source file or directory.
   bucket                S3 bucket destination. It must already exist.
-  key_prefix            This prefix will be added to the source path we copy.
-                        Blank by default.
-  {private,public-read,public-read-write,authenticated-read}
-                        ACL policy for the new files in the S3 bucket. If you
-                        dont specify anything ACL will be private by default.
+  key_prefix            This prefix will be added to the source path we copy. Blank by default. {private,public-read,public-read-write,authenticated-read}
+                        ACL policy for the new files in the S3 bucket. If you dont specify anything ACL will be private by default.
 
 
 Setting launch permissions to an AMI
@@ -158,8 +153,7 @@ usage: bellatrix perm2ami [-h] ami permissions_file
 
 positional arguments:
   ami               AMI name. Something like ami-6ba27502
-  permissions_file  Text file with an account number (12 digits number without
-                    dashes) on each line.
+  permissions_file  Text file with an account number (12 digits number without dashes) on each line.
 
 
 Stopping an EC2 instance
@@ -183,7 +177,7 @@ positional arguments:
 
 
 Bewitching an AMI or how to start, provision and burn with a single command
-------------------------------------------------------
+--------------------------------------------------------------------------------
 usage: bellatrix bewitch [-h] configuration
 
 positional arguments:

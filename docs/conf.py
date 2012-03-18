@@ -242,3 +242,6 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+#using default theme in readthedocs.org
+html_style=None
