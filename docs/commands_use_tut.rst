@@ -197,11 +197,17 @@ https://s3.amazonaws.com/your_bucket Usage help::
 
 Setting launch permissions to an AMI
 ------------------------------------------------------
-usage: bellatrix perm2ami [-h] ami permissions_file
+An AMI can be public, so anyone can generate a new instance from it or private so only the owner can access it.
+In order to give other accounts the ability to use your AMI, you can use this command:: 
 
-positional arguments:
-  ami               AMI name. Something like ami-6ba27502
-  permissions_file  Text file with an account number (12 digits number without dashes) on each line.
+	bellatrix perm2ami ami permissions_file
+
+----------------------------------
+
+**Paramaters list**
+
+* ami - AMI name. Something like ami-6ba27502
+* permissions_file. Text file with an account number (12 digits number without dashes) on each line.
 
 
 Stopping an EC2 instance
