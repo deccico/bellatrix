@@ -192,7 +192,7 @@ https://s3.amazonaws.com/your_bucket Usage help::
 * bucket - S3 bucket destination. Please remember to create it first. A bucket needs to be unique.
 * key_prefix - This prefix will be added to the source path we copy. It is blank by default. 
 * {private,public-read,public-read-write,authenticated-read}
-	* With this option, you control who can access to your files in the S3 bucket. If you don't specify anything they will be private by default.
+	* With this option you control who can access to your files in the S3 bucket. If you don't specify anything the policy will be private by default.
 
 
 Setting launch permissions to an AMI
