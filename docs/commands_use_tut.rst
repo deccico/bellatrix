@@ -161,24 +161,38 @@ Another, more complex example of a configuration file can be found here: https:/
 
 Saving the state of an instance into a new Amazon AMI
 ------------------------------------------------------
-usage: bellatrix burn [-h] [--wait [WAIT]] instance image_name
+If you want to capture the state of your EC2 instance into a new AMI, you just need to call this command::
+ 
+	bellatrix burn [--wait [{true,false}] instance image_name
 
-positional arguments:
-  instance       Instance name. Something like: i-b63c98d4 The instance should be running.
-  image_name     Image name. A time stamp will be added to the image name.
+-------------------
 
+**Parameters list**
+
+* instance - Instance name. Something like: i-b63c98d4. The instance should be running when you invoke this command.
+* image_name - This will be the name of your AMI. A time stamp will be added, so you can apply the same name and more importantly, identify when each version was generated.
+
+* --wait [true, false]  
+	* This is **false** by default.
+	* Burning a new image usually takes some minutes. If you don't use this option (or you set it to false) this command will show you the AMI code and then finish immediately, but if you use "--wait=true" the **burn** sub-command will finish only when the AMI is ready to be used.
 
 Copying files to an S3 bucket
 ------------------------------------------------------
-usage: bellatrix copy2s3 [-h]
-                         source bucket [key_prefix]
-                         [{private,public-read,public-read-write,authenticated-read}]
+This command will copy a file or directory to a `S3 bucket <http://aws.amazon.com/s3/>`. You can imagine S3 as an encripted 'infinite' disk in the cloud. 
+Your files and directory structure will be put into a bucket that you need to create first. After you copy your files you can access them in: 
+https://s3.amazonaws.com/your_bucket Usage help::   
 
-positional arguments:
-  source                Source file or directory.
-  bucket                S3 bucket destination. It must already exist.
-  key_prefix            This prefix will be added to the source path we copy. Blank by default. {private,public-read,public-read-write,authenticated-read}
-                        ACL policy for the new files in the S3 bucket. If you dont specify anything ACL will be private by default.
+	bellatrix copy2s3 source bucket [key_prefix] [{private,public-read,public-read-write,authenticated-read}]
+
+----------------------------------
+
+**Paramaters list**
+
+* source - Source file or directory in your computer.
+* bucket - S3 bucket destination. Please remember to create it first. A bucket needs to be unique.
+* key_prefix - This prefix will be added to the source path we copy. It is blank by default. 
+* {private,public-read,public-read-write,authenticated-read}
+	* With this option, you control who can access to your files in the S3 bucket. If you don't specify anything they will be private by default.
 
 
 Setting launch permissions to an AMI
