@@ -32,4 +32,4 @@ General Information
 
 Provisioning Example
 ====================
-	* Installing Django, GUnicorn and Nginx into a blank Ubuntu AMI.
+	* Installing Django, GUnicorn and Nginx into a blank Ubuntu AMI: https://bitbucket.org/deccico/bellatrix_configs/src/tip/bellatrix_configs/ubuntu_django_nginx_gunicorn.py
