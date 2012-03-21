@@ -153,6 +153,8 @@ Usage example::
 	
 The previous example can be found here: https://bitbucket.org/deccico/bellatrix_configs/src/tip/bellatrix_configs/simple_provision_test.py 
 Another, more complex example of a configuration file can be found here: https://bitbucket.org/deccico/bellatrix_configs/src/tip/bellatrix_configs/ubuntu_django_nginx_gunicorn.py
+Here is the commands documentation: http://bellatrix.readthedocs.org/en/latest/source/ref/bellatrix.lib.html#module-bellatrix.lib.cmds
+ 
 
 * user - User used to connect to the host. E.g. **ubuntu**
 * hostname - Hostname or simply the ip of the machine.
