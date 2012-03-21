@@ -123,7 +123,7 @@ def main():
     parser_provision.set_defaults(func=provision)
 
     parser_stop = subparsers.add_parser('stop', help='Stop a given instance or all of them if you pass the "all" argument. Stopping an instance will shut-down the instance but preserve data on the EBS volume. After stopping you will only be charged $0.10 per allocated GB per month (http://aws.amazon.com/ebs/).')
-    parser_stop.add_argument('instance', help='Instance id. Something like i-39e2075d. If you pass "all" then all instances will be stopped (unless they are explicitly protected)')
+    parser_stop.add_argument('instance', help='Instance id. Something like i-39e2075d. If you pass "all" then all instances will be stopped.')
     parser_stop.set_defaults(func=stop)
 
     parser_terminate = subparsers.add_parser('terminate', help='Terminate a given instance or all of them if you pass the "all" parameter. Terminating an instance will shut it down and delete data on the EBS volume. Your instance/s won''t produce any cost after you terminate them.')
