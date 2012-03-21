@@ -29,3 +29,7 @@ General Information
 	* Configuration examples: https://bitbucket.org/deccico/bellatrix_configs
 	* New releases can be found here: http://pypi.python.org/pypi/bellatrix
 	* Contact information: deccico[at]gmail.com 
+
+Provisioning Example
+====================
+	* Installing Django, GUnicorn and Nginx into a blank Ubuntu AMI.
