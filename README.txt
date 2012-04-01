@@ -8,7 +8,8 @@ Bellatrix is a set of (magic) tools to automate the use of Amazon EC2 services.
 
 Quick reference:
 
-    * bellatrix start - Starts a new EC2 instance.
+    * bellatrix list - List all your EC2 instances.
+    * bellatrix start - Start a new EC2 instance.
     * bellatrix provision - Apply a set of commands (through SSH) to any host, not only EC2 instances. 
     * bellatrix bewitch - Start a new instance, applies a configuration to it and finally saves it into a new ami.
     * bellatrix burn - Burn a running instance into a new ami.

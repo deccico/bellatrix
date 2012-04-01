@@ -20,6 +20,7 @@ import bellatrix.set_security
 import bellatrix.start_instance
 import bellatrix.provision
 import bellatrix.stop
+import bellatrix.list
 
 
 def bewitch(args):
@@ -59,6 +60,9 @@ def terminate(args):
     logging.info("terminating...")
     sys.exit(bellatrix.stop.terminate(args.instance))
 
+def list(args):
+    logging.info("listing...")
+    sys.exit(bellatrix.list.list())
 
 #-------------------------------------------------------
 
@@ -129,6 +133,9 @@ def main():
     parser_terminate = subparsers.add_parser('terminate', help='Terminate a given instance or all of them if you pass the "all" parameter. Terminating an instance will shut it down and delete data on the EBS volume. Your instance/s won''t produce any cost after you terminate them.')
     parser_terminate.add_argument('instance', help='Instance id. Something like i-39e2075d. If you pass ALL then all instances will be terminated (unless they are explicitly protected)')
     parser_terminate.set_defaults(func=terminate)
+
+    parser_list = subparsers.add_parser('list', help='List all your EC2 instances.')
+    parser_list.set_defaults(func=list)
 
     args = parser.parse_args()
     args.func(args)

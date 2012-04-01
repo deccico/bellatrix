@@ -54,6 +54,29 @@ will show a nice message explaining what file (and where) you need to provide.
 		http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/generating-a-keypair.html
 		The private key file is only used by the 'provision' and 'bewitch' commands. 
 
+Displaying your EC2 instances
+-----------------------------------------------
+Since running EC2 instances cost you money, this command will print information about your instances 
+(running or not) and a useful summary at the very end. You only need to execute:
+	
+    * bellatrix list
+
+The command will display an output similar to this::
+
+	adrian@adrian-packard-bell:~/b$ bellatrix list
+	2012-04-01 12:26:02,891 INFO listing...
+	2012-04-01 12:26:02,913 INFO Getting instances information... (this operation usually takes some seconds)
+	Instance:i-d67a61b2 | architecture:x86_64 | dns_name: | hypervisor:xen | image_id:ami-6fa27506 | instance_type:t1.micro | kernel:aki-825ea7eb | key_name:key | launch_time:2012-04-01T02:13:55.000Z | private_dns_name: | public_dns_name: | root_device_name:/dev/sda1 | root_device_type:ebs | state:terminated | virtualizationType:paravirtual
+	
+	Instance:i-dc756eb8 | architecture:x86_64 | dns_name:ec2-50-19-190-98.compute-1.amazonaws.com | hypervisor:xen | image_id:ami-6fa27506 | instance_type:t1.micro | ip_address:50.19.190.98 | kernel:aki-825ea7eb | key_name:key | launch_time:2012-04-01T02:25:23.000Z | private_dns_name:ip-10-202-17-35.ec2.internal | private_ip_address:10.202.17.35 | public_dns_name:ec2-50-19-190-98.compute-1.amazonaws.com | root_device_name:/dev/sda1 | root_device_type:ebs | state:running | virtualizationType:paravirtual
+	
+	Running instances (you pay for them):1
+	Total instances:2
+
+Please remember that you only pay for your **running** instances. Your **stopped** instances will 
+generate a very small cost due to the use of an EBS disk. So far the cost is equal to $0.10 per allocated 
+GB per month (http://aws.amazon.com/ebs/). 
+
 
 Starting an EC2 instance
 -----------------------------------------------
@@ -218,7 +241,7 @@ Stopping an EC2 instance
 With this command, you can stop a given instance or all of them if you pass the "all" argument. 
 Stopping an instance will shut-down the instance but will preserve data on the EBS volume. 
 You won't pay for the more expensive computing capacity. The only charge after you stop an instance is $0.10 per 
-allocated GB per month (http://aws.amazon.com/ebs/). After you **stop** an instance, you can start 
+allocated GB per month (http://aws.amazon.com/ebs/). After you **stop** an instance, you can **start** 
 it and access to the same data::
 
 	bellatrix stop [-h] instance

@@ -58,8 +58,11 @@ class Ec2lib:
                 return i
         return None
 
-    def getAllInstances(self):
+    def getAllRunningInstances(self):
         return self.getInstances()
+
+    def getAllInstances(self):
+        return self.getInstances(None)
         
     def getImage(self, ami):
         ami_object = self.ec2.get_image(ami)
@@ -182,7 +185,7 @@ class Ec2lib:
         logging.debug("getting all instances...")
         for img in self.getReservations():
             for r in img.instances:
-                if state == r.state_code:
+                if state == None or state == r.state_code:
                     instances.append(r)
                     logging.debug("appending instance:%s" % r)
         return instances
