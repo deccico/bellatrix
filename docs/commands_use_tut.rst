@@ -57,9 +57,9 @@ will show a nice message explaining what file (and where) you need to provide.
 Displaying your EC2 instances
 -----------------------------------------------
 Since running EC2 instances cost you money, this command will print information about your instances 
-(running or not) and a useful summary at the very end. You only need to execute:
+(running or not) and a useful summary at the very end. You only need to execute::
 	
-    * bellatrix list
+	bellatrix list
 
 The command will display an output similar to this::
 
