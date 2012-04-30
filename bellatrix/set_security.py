@@ -27,7 +27,7 @@ class Run():
             self._ec2.authorizeSecurityGroup(sg, None, p, sg)
                      
 
-def run(args, security_group_name, ports_file, cidrs_file):
+def run(security_group_name, ports_file, cidrs_file):
     r = Run(bellatrix_util.getKey(), bellatrix_util.getSecret())
     r.setSecurityGroupAuth(security_group_name, ports_file, cidrs_file)
     return 0
