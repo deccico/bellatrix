@@ -65,7 +65,7 @@ class Bewitch():
             else:
                 #todo: check if we can capture the stderr and stdout and seeing the output in real time. Maybe using tee?
                 context['key'] = ' -i ' + key  
-                cmd = "ssh -t -o StrictHostKeyChecking=no %(key)s %(user)s@%(dns)s '%(command)s 2>&1' " % \
+                cmd = "ssh -t -t -o StrictHostKeyChecking=no %(key)s %(user)s@%(dns)s '%(command)s 2>&1' " % \
                 dict(context.items() + {self.CMD: c}.items())   #join the two dictionaries
             logging.info("executing: " + cmd)
             res = os.system(cmd)
