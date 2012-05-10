@@ -27,7 +27,8 @@ import os
 apt_prefix = "export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin;export TERM=linux; "
 apt_get_and_options = "sudo /usr/bin/apt-get -q -y -o DPkg::Options::=--force-confold --fix-missing " 
 apt_install = apt_get_and_options + "install "
-apt_get_install_cmd = apt_prefix + apt_install 
+apt_get_install_cmd = apt_prefix + apt_install
+cmd = "command" 
 
 
 def apt_get_install(package):
@@ -229,10 +230,21 @@ def copy(src, dest):
     """
     return ["cp -f %s %s" % (src, dest)]    
 
-#def scp(src, dest):
-#    return [
-#            "mkdir -p %s" % src,
-#            {cmd:"scp -o StrictHostKeyChecking=no -i %(key)s -r *.sh Rakefile manifests/ features/ modules/ %(user)s@%(dns)s:" 
-#             + "%s" % src  
-#             + ";let RET=$?;exit $RET"} 
-#            ]
+def scp(src, dest):
+    return [
+            "mkdir -p %s" % dest,
+            {cmd:"scp -o StrictHostKeyChecking=no -i %(key)s " 
+             + src + " %(user)s@%(dns)s:" 
+             + dest} 
+            ]
+
+def logical_resize_disk(device):
+    """
+    Resizes the logical volume to new_size specified in the start command.  This is necessary
+    for some operating systems that do not automatically resize to this value.
+    
+    :type device: string
+    :param device: logical volume to resize, e.g. /dev/xvda1 in RedHat family systems 
+
+    """
+    return ["resize2fs " + device]
