@@ -1,7 +1,7 @@
 #Constants
 
 APP = "Bellatrix"
-__version__ = '1.1.8'
+__version__ = '1.1.9'
 description = "AWS EC2 magic utilities"
 
 SECRET_FILE = "secret"

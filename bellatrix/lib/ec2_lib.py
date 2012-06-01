@@ -140,13 +140,11 @@ class Ec2lib:
                      % (image.id, key_name, instance_type, instance_initiated_shutdown_behavior, new_size))
         mapping = None
         if new_size != None:
-            dev_sda1 = boto.ec2.blockdevicemapping.BlockDeviceType()
-            dev_sda1.deleteOnTermination = 'true'
+            dev_sda1 = boto.ec2.blockdevicemapping.BlockDeviceType(delete_on_termination=True)
             dev_sda1.size = new_size
             bdm = boto.ec2.blockdevicemapping.BlockDeviceMapping()
-            bdm['/dev/sda1'] = dev_sda1            
+            bdm['/dev/sda1'] = dev_sda1
             mapping = bdm
-        #img.run(key_name='cloudright', security_groups=['test1'], instance_type='m1.large')
         reservation = image.run(1, 1, 
                       key_name, security_group, 
                       instance_type=instance_type, 
