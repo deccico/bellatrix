@@ -29,7 +29,7 @@ setup(name='bellatrix',
       platforms = "Posix; MacOS X; Windows",
       
       #http://packages.python.org/distribute/setuptools.html#declaring-dependencies
-      install_requires = ['boto==2.1.1', 'argparse==1.2.1'],
+      install_requires = ['boto==2.4.1', 'argparse==1.2.1'],
 
       #classifiers from http://pypi.python.org/pypi?:action=list_classifiers
       classifiers = [

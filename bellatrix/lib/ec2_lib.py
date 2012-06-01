@@ -141,7 +141,7 @@ class Ec2lib:
         mapping = None
         if new_size != None:
             dev_sda1 = boto.ec2.blockdevicemapping.BlockDeviceType()
-            dev_sda1.delete_on_termination = True
+            dev_sda1.deleteOnTermination = 'true'
             dev_sda1.size = new_size
             bdm = boto.ec2.blockdevicemapping.BlockDeviceMapping()
             bdm['/dev/sda1'] = dev_sda1            
