@@ -24,7 +24,7 @@ setup(name='bellatrix',
       
       packages=['bellatrix', 'bellatrix.lib'],
 
-      scripts=['bin/bellatrix',],
+      scripts=['bin/bellatrix','bin/bellatrix.bat'],
 
       platforms = "Posix; MacOS X; Windows",
       
