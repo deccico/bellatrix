@@ -24,8 +24,8 @@ General Information
 ===================
 	* Getting Started: http://bellatrix.readthedocs.org/en/latest/commands_use_tut.html
 	* Main documentation: http://bellatrix.readthedocs.org
-	* Bugs? Feature request? https://bitbucket.org/adeccico/bellatrix/issues
-	* Source code: https://bitbucket.org/adeccico/bellatrix
+	* Bugs? Feature request? https://bitbucket.org/deccico/bellatrix/issues
+	* Source code: https://bitbucket.org/deccico/bellatrix
 	* Configuration examples: https://bitbucket.org/deccico/bellatrix_configs
 	* New releases can be found here: http://pypi.python.org/pypi/bellatrix
 	* Contact information: deccico[at]gmail.com 

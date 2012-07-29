@@ -166,7 +166,7 @@ Usage example::
 	"""
 	
 	#commands library from Bellatrix
-	#The source file can be found here:     https://bitbucket.org/adeccico/bellatrix/src/tip/bellatrix/lib/cmds.py
+	#The source file can be found here:     https://bitbucket.org/deccico/bellatrix/src/tip/bellatrix/lib/cmds.py
 	# and the documentation here: http://bellatrix.readthedocs.org/en/latest/source/ref/bellatrix.lib.html#module-bellatrix.lib.cmds
 	from bellatrix.lib import cmds
 	commands = cmds.apt_get_update()
@@ -306,7 +306,7 @@ This is how you use it::
 	* cmds - The list of command that are going to be executed in order to provision the new instance.
 		* **cmds** is just a list of strings. Each element needs to be a regular command that is going to be executed in order. 
 		* Bellatrix already provides a set of handy commands ready to use. 
-			* The list can be found here: https://bitbucket.org/adeccico/bellatrix/src/tip/bellatrix/lib/cmds.py
+			* The list can be found here: https://bitbucket.org/deccico/bellatrix/src/tip/bellatrix/lib/cmds.py
 			* While the documentation is here: http://bellatrix.readthedocs.org/en/latest/source/ref/bellatrix.lib.html#module-bellatrix.lib.cmds
 		* Usage example::
 

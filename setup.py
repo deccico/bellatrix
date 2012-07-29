@@ -18,7 +18,7 @@ setup(name='bellatrix',
       keywords='ec2, ami, configuration, management, puppet, boto, aws, devops, sysadmin',
       author='Adrian Deccico',
       author_email='deccico@gmail.com',
-      url='https://bitbucket.org/adeccico/bellatrix',
+      url='https://bitbucket.org/deccico/bellatrix',
       
       license='Apache License 2.0',
       
